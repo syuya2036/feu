@@ -155,8 +155,8 @@
 - [x] Add `app.post/put/delete/patch/options/head`
 - [x] Add `app.any`
 - [x] Add `app.on(methods, path, handler)`
-- [ ] Add composition API
-- [ ] Add `app.route(prefix, sub_app)` (nesting)
+- [x] Add composition API
+- [x] Add `app.route(prefix, sub_app)` (nesting)
 - [ ] Add `app.base_path(prefix)`
 - [ ] Define route merging rules (prefix normalization, slash joining)
 - [ ] Add 404 customization hooks stubs (real handlers in Phase 3)
