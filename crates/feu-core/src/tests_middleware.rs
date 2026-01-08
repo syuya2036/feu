@@ -12,19 +12,12 @@ impl Middleware for Logger {
         Box::pin(async move {
             ctx.header("x-logger-before", "1");
             let mut res = next.run(ctx).await?;
-            // We can't access ctx here readily as it was moved.
-            // But we can modify response.
             let headers = res.0.headers_mut();
             headers.insert("x-logger-after", "1".parse().unwrap());
             Ok(res)
         })
     }
 }
-
-/*
-// Closure middleware wrapper helper if needed, but we implemented Middleware for Fn
-// Fn(Ctx, Next) -> Future
-*/
 
 #[tokio::test]
 async fn test_middleware_execution_order() {
@@ -47,13 +40,6 @@ async fn test_middleware_execution_order() {
     let res = app.handle(req).await.unwrap();
 
     assert_eq!(res.0.status(), StatusCode::OK);
-
-    // Check headers
-    // Note: Ctx headers set during "A-plan" (ctx.header(...)) are applied to response *inside* `c.text()`.
-    // The middleware calls `next.run(ctx)`. `ctx` carries the pending headers.
-    // The handler calls `c.text()`, which calls `c.apply_pending()`, flushing "x-logger-before" and "x-mw2-before" to response.
-    // Then middleware returns `res` and adds "after" headers.
-
     let h = res.0.headers();
     assert!(h.contains_key("x-logger-before"));
     assert!(h.contains_key("x-mw2-before"));
@@ -64,10 +50,7 @@ async fn test_middleware_execution_order() {
 #[tokio::test]
 async fn test_middleware_short_circuit() {
     let app = App::new()
-        .use_mw(|_c: Ctx, _next: Next| async move {
-            // Don't call next, return immediately
-            Ok(FeuResponse::text("Short Circuit"))
-        })
+        .use_mw(|_c: Ctx, _next: Next| async move { Ok(FeuResponse::text("Short Circuit")) })
         .get("/test", |_| async {
             Ok(FeuResponse::text("Should not be reached"))
         });
@@ -91,7 +74,6 @@ async fn test_base_path() {
         .base_path("/api/v1")
         .get("/users", |mut c: Ctx| async move { Ok(c.text("users")) });
 
-    // GET /api/v1/users
     let req = Request::builder()
         .uri("/api/v1/users")
         .body(FeuBody::Empty)
@@ -99,11 +81,60 @@ async fn test_base_path() {
     let res = app.handle(req).await.unwrap();
     assert_eq!(res.0.status(), StatusCode::OK);
 
-    // GET /users -> 404
     let req = Request::builder()
         .uri("/users")
         .body(FeuBody::Empty)
         .unwrap();
     let res = app.handle(req).await.unwrap();
     assert_eq!(res.0.status(), StatusCode::NOT_FOUND);
+}
+
+#[tokio::test]
+async fn test_not_found_handler() {
+    let app = App::new().not_found(|mut c: Ctx| async move {
+        Ok(c.text("Custom 404").with_status(StatusCode::NOT_FOUND))
+    });
+
+    let req = Request::builder()
+        .uri("/nothing")
+        .body(FeuBody::Empty)
+        .unwrap();
+    let res = app.handle(req).await.unwrap();
+
+    assert_eq!(res.0.status(), StatusCode::NOT_FOUND);
+    if let FeuBody::Text(s) = res.0.body() {
+        assert_eq!(s, "Custom 404");
+    } else {
+        panic!("Expected text");
+    }
+}
+
+#[tokio::test]
+async fn test_use_at() {
+    let app = App::new()
+        .use_at("/admin", Logger)
+        .get(
+            "/admin/dash",
+            |mut c: Ctx| async move { Ok(c.text("dash")) },
+        )
+        .get(
+            "/public/home",
+            |mut c: Ctx| async move { Ok(c.text("home")) },
+        );
+
+    let req = Request::builder()
+        .uri("/admin/dash")
+        .body(FeuBody::Empty)
+        .unwrap();
+    let res = app.handle(req).await.unwrap();
+    let h = res.0.headers();
+    assert!(h.contains_key("x-logger-before"));
+
+    let req = Request::builder()
+        .uri("/public/home")
+        .body(FeuBody::Empty)
+        .unwrap();
+    let res = app.handle(req).await.unwrap();
+    let h = res.0.headers();
+    assert!(!h.contains_key("x-logger-before"));
 }

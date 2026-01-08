@@ -168,7 +168,7 @@
 - [x] Test execution order
 - [x] Test short-circuiting
 - [x] Test base_path routing
-- [ ] Define path-scoped middleware matching approach (prefix match or router-based)
+- [x] Define path-scoped middleware matching approach (use_at wrapper middleware)
 - [x] Implement `use_fn` (Hono-like middleware wrapper)
 - [x] Define `Next` wrapper type
 - [x] Implement `Next::run(c: Ctx) -> Result<FeuResponse, Error>` calling inner service
@@ -176,13 +176,13 @@
 - [x] Ensure user does not see Tower types in `use_fn` API
 - [x] Ensure middleware supports before/after and short-circuit
 - [x] Ensure ordering is deterministic (documented)
-- [ ] Implement `not_found` handler support
-- [ ] Implement `app.not_found(handler)` storing a fallback handler
-- [ ] Ensure not_found runs after router miss (after middleware or within pipeline; define)
-- [ ] Implement `on_error` handler support
-- [ ] Implement `app.on_error(handler)` storing global error handler
-- [ ] Define error propagation policy through middleware
-- [ ] Define default error response when on_error missing
+- [x] Implement `not_found` handler support
+- [x] Implement `app.not_found(handler)` storing a fallback handler
+- [x] Ensure not_found runs after router miss (after middleware or within pipeline; define)
+- [x] Implement `on_error` handler support
+- [x] Implement `app.on_error(handler)` storing global error handler
+- [x] Define error propagation policy through middleware
+- [x] Define default error response when on_error missing
 - [ ] Add Env/Runtime hooks framework
 - [ ] Introduce `App<Env, State>` generics (or equivalent)
 - [ ] Add `RuntimeCtx` trait

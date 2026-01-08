@@ -20,11 +20,29 @@ pub struct App {
     routes: Arc<Vec<(Method, String, Arc<dyn Handler>)>>,
     middlewares: Arc<Vec<Arc<dyn Middleware>>>,
     base_path: String,
+    not_found_handler: Arc<Option<Arc<dyn Handler>>>,
+    error_handler: Arc<Option<Arc<dyn Handler>>>,
 }
 
 impl Default for App {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+struct PathMiddleware<M> {
+    prefix: String,
+    inner: M,
+}
+
+impl<M: Middleware> Middleware for PathMiddleware<M> {
+    fn handle(&self, ctx: Ctx, next: Next) -> BoxFuture<Result<FeuResponse>> {
+        let path = ctx.req.uri().path().to_string();
+        if path.starts_with(&self.prefix) {
+            self.inner.handle(ctx, next)
+        } else {
+            Box::pin(next.run(ctx))
+        }
     }
 }
 
@@ -36,6 +54,8 @@ impl App {
             routes: Arc::new(Vec::new()),
             middlewares: Arc::new(Vec::new()),
             base_path: String::new(),
+            not_found_handler: Arc::new(None),
+            error_handler: Arc::new(None),
         }
     }
 
@@ -50,6 +70,18 @@ impl App {
     {
         Arc::make_mut(&mut self.middlewares).push(Arc::new(middleware));
         self
+    }
+
+    /// Registers a middleware that only runs if the path starts with `prefix`.
+    pub fn use_at<M>(mut self, prefix: &str, middleware: M) -> Self
+    where
+        M: Middleware,
+    {
+        let mw = PathMiddleware {
+            prefix: prefix.to_string(),
+            inner: middleware,
+        };
+        self.use_mw(mw)
     }
 
     fn register_arc(&mut self, method: Method, path: &str, handler: Arc<dyn Handler>) {
@@ -194,16 +226,31 @@ impl App {
         self
     }
 
+    pub fn not_found<H>(mut self, handler: H) -> Self
+    where
+        H: Handler,
+    {
+        *Arc::make_mut(&mut self.not_found_handler) = Some(Arc::new(handler));
+        self
+    }
+
+    pub fn on_error<H>(mut self, handler: H) -> Self
+    where
+        H: Handler,
+    {
+        *Arc::make_mut(&mut self.error_handler) = Some(Arc::new(handler));
+        self
+    }
+
     pub async fn handle(&self, req: FeuRequest) -> Result<FeuResponse> {
         let router = self.router.clone();
         let handlers = self.handlers.clone();
+        let not_found = self.not_found_handler.clone();
 
-        // Correct usage of router_dispatch
-        // It needs to be a closure fitting Next's endpoint signature: FnOnce(Ctx) -> BoxFuture
         let router_dispatch = move |req: Ctx| {
-            // We need to move router/handlers into the async block
             let router = router.clone();
             let handlers = handlers.clone();
+            let not_found = not_found.clone();
 
             Box::pin(async move {
                 let method = req.req.method();
@@ -211,61 +258,44 @@ impl App {
 
                 if let Some(match_) = router.recognize(method, path) {
                     let handler = &handlers[match_.handler_id.0];
-                    // We need to reconstruct Ctx with params?
-                    // Ctx is passed in. It might have params from previous matching?
-                    // Usually params are extracted by the router.
-                    // If middleware changed path?
-                    // For now, let's assume router.recognize is authoritative for params.
-                    // We merge params? Or replace?
-                    // Ctx::new replaces params.
-                    // But Ctx handles request.
-                    // The `req` passed to `router_dispatch` is `Ctx`.
-                    // We should use `req`'s `FeuRequest`.
-                    let mut ctx = req; // It consumes Ctx
-                                       // Update params
+                    let mut ctx = req;
                     ctx.params = match_.params;
-
                     handler.call(ctx).await
+                } else if let Some(h) = not_found.as_ref() {
+                    h.call(req).await
                 } else {
                     Ok(FeuResponse::text("Not Found").with_status(StatusCode::NOT_FOUND))
                 }
             }) as BoxFuture<Result<FeuResponse>>
         };
 
-        // Build the chain
-        // pipeline: mw[0] -> mw[1] -> ... -> router
-        // Next wraps the "rest".
-
-        // We iterate backwards?
-        // mw[N] wraps router.
-        // mw[N-1] wraps (mw[N] + router).
-        // ...
-        // mw[0] wraps (mw[1]...router).
-
-        // Initial "next" is the router dispatch.
-        // But Next expects `FnOnce(Ctx)`.
-
-        // Since `Next` struct has `pub(crate) endpoint: Box<dyn FnOnce(Ctx)...>`
         let mut next = Next {
             endpoint: Box::new(router_dispatch),
         };
 
-        // Iterate reversed
         for mw in self.middlewares.iter().rev() {
             let mw = mw.clone();
             let current_next = next;
-
-            // New endpoint wraps `mw.handle(ctx, current_next)`
             let endpoint = move |ctx: Ctx| mw.handle(ctx, current_next);
-
             next = Next {
                 endpoint: Box::new(endpoint),
             };
         }
 
-        // Finally execute the chain
-        // We need initial Ctx
-        let ctx = Ctx::new(req, vec![]); // Initial params empty
-        next.run(ctx).await
+        let ctx = Ctx::new(req, vec![]);
+        let res = next.run(ctx).await;
+
+        // Error handling
+        match res {
+            Ok(r) => Ok(r),
+            Err(e) => {
+                if let Some(_h) = self.error_handler.as_ref() {
+                    // TODO: Implement error handler logic
+                    Err(e)
+                } else {
+                    Err(e)
+                }
+            }
+        }
     }
 }
