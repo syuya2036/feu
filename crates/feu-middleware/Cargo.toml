@@ -3,10 +3,23 @@ name = "feu-middleware"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+default = []
+compress = ["dep:async-compression", "streaming"]
+json = ["dep:serde_json", "feu-core/json"]
+streaming = ["feu-core/streaming"]
+
 [dependencies]
+async-compression = { version = "0.4.36", features = ["gzip", "brotli", "deflate", "futures-io", "tokio"], optional = true }
+bytes = "1.11.0"
 feu-core = { version = "0.1.0", path = "../feu-core" }
+futures-util = "0.3.31"
 http = "1.4.0"
+serde_json = { version = "1.0.149", optional = true }
 sha1 = "0.10.6"
 tokio = { version = "1.49.0", features = ["macros", "rt", "rt-multi-thread", "time"] }
+tokio-util = { version = "0.7.18", features = ["io", "codec"] }
 tracing = "0.1.44"
 uuid = { version = "1.19.0", features = ["v4", "fast-rng"] }
+
+

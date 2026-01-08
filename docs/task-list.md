@@ -256,14 +256,14 @@
 - [x] Implement perf/caching middleware
 - [x] Implement `etag` middleware (If-None-Match -> 304)
 - [ ] Implement `cache` middleware (Cache-Control policies)
-- [ ] Add `compress` feature
-- [ ] Implement `compress` middleware (gzip first; br/deflate optional)
-- [ ] Implement `body_limit` middleware (reject oversize)
+- [x] Add `compress` feature
+- [x] Implement `compress` middleware (gzip first; br/deflate optional)
+- [x] Implement `body_limit` middleware (reject oversize)
 - [ ] Implement compatibility middleware
 - [ ] Implement `method_override` middleware
 - [ ] Implement `trailing_slash` middleware
 - [ ] Implement DX/presentation middleware
-- [ ] Implement `pretty_json` middleware (dev formatting policy)
+- [x] Implement `pretty_json` middleware (dev formatting policy)
 - [ ] Implement `language` middleware (locale negotiation)
 - [ ] Implement `context_storage` middleware/util (task-local access) + document caveats
 - [ ] Implement `combine` helper (compose multiple middleware)
