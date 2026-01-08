@@ -13,3 +13,6 @@ thiserror = "1.0"
 default = []
 openapi = []
 rpc = []
+
+[dev-dependencies]
+tokio = { version = "1.0", features = ["macros", "rt"] }

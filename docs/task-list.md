@@ -49,71 +49,71 @@
 
 ## Phase 1 — feu-core Minimal Kernel (Hello World)
 
-- [ ] Add core dependencies (`http`, `bytes`, minimal error crates) to `feu-core`
-- [ ] Implement `Error` type (core)
-- [ ] Define `ErrorKind` (Route/Parse/Timeout/NotFound/Internal/etc.)
-- [ ] Implement `Display` for `Error`
-- [ ] Implement `std::error::Error` for `Error`
-- [ ] Define `Result<T>` alias
-- [ ] Define canonical types
-- [ ] Define `FeuRequest = http::Request<FeuBody>`
-- [ ] Define `InnerResponse = http::Response<FeuBody>`
-- [ ] Implement `FeuBody` (minimal)
-- [ ] Add `FeuBody::Empty`
-- [ ] Add `FeuBody::Bytes(bytes::Bytes)`
-- [ ] Add `FeuBody::Text(String)`
-- [ ] Add conversions into `FeuBody`
-- [ ] Implement `From<()> for FeuBody`
-- [ ] Implement `From<Bytes> for FeuBody`
-- [ ] Implement `From<String> for FeuBody`
-- [ ] Implement `From<&'static str> for FeuBody`
-- [ ] Implement `FeuResponse` wrapper
-- [ ] Add `pub struct FeuResponse(pub http::Response<FeuBody>)`
-- [ ] Add `into_inner/as_inner/as_inner_mut`
-- [ ] Add minimal constructors on `FeuResponse`
-- [ ] Add `FeuResponse::empty(StatusCode)`
-- [ ] Add `FeuResponse::text(...)` with content-type
-- [ ] Add `FeuResponse::html(...)` with content-type
-- [ ] Add `FeuResponse::redirect(location, code)` with Location header
-- [ ] Add fluent methods on `FeuResponse`
-- [ ] Add `with_status(code)` (non-mut style)
-- [ ] Add `with_header(name, value)` (non-mut style)
-- [ ] Add `with_content_type(mime)` (non-mut style)
-- [ ] Implement `IntoResponse` trait
-- [ ] Implement `IntoResponse for FeuResponse`
-- [ ] Implement `IntoResponse for http::Response<FeuBody>`
-- [ ] Implement `IntoResponse for (StatusCode, T: IntoResponse)`
-- [ ] Implement `IntoResponse for Result<T: IntoResponse, Error>`
-- [ ] Implement `Ctx` minimal (no routing params yet)
-- [ ] Add `Ctx` fields: `req`, `extensions`, `pending_status`, `pending_headers`, `pending_content_type`
-- [ ] Implement `c.req()`, `c.method()`, `c.path()`
-- [ ] Implement `c.extensions()/extensions_mut()`
-- [ ] Implement `c.insert<T>()` and `c.get<T>()`
-- [ ] Implement A-plan pending response configuration (locked-in)
-- [ ] Implement `c.status(code) -> &mut Ctx` that sets pending status
-- [ ] Implement `c.header(name, value) -> &mut Ctx` that appends pending header
-- [ ] Implement `c.content_type(mime) -> &mut Ctx` that sets pending content-type
-- [ ] Implement pending consumption rule (locked-in)
-- [ ] Implement internal method `c.take_pending()` that returns (status, headers, content-type) and resets them
-- [ ] Implement response helpers on `Ctx`
-- [ ] Implement `c.text(body) -> FeuResponse` consuming pending settings
-- [ ] Implement `c.html(body) -> FeuResponse` consuming pending settings
-- [ ] Implement `c.body(bytes) -> FeuResponse` consuming pending settings
-- [ ] Implement `c.redirect(location) -> FeuResponse` consuming pending settings (default 302 unless pending overrides)
-- [ ] Implement `c.not_found() -> FeuResponse` (simple 404)
-- [ ] Implement `App` minimal
-- [ ] Implement `App::new()`
-- [ ] Define handler type erasure strategy (BoxFuture or trait object)
-- [ ] Implement a minimal GET-only route table (temporary until router phase)
-- [ ] Implement `app.get(path, handler)` using the temporary table
-- [ ] Implement `app.handle(req, env, runtime)` minimal entrypoint
-- [ ] Implement default 404 when route missing
-- [ ] Add unit tests
-- [ ] Test `c.status()+c.header()+c.text()` behavior (consumption + reset)
-- [ ] Test `c.text()` content-type correctness
-- [ ] Test `c.redirect()` sets Location header
-- [ ] Test minimal `App` GET route returns expected response
-- [ ] Ensure `no-default-features` build passes
+- [x] Add core dependencies (`http`, `bytes`, minimal error crates) to `feu-core`
+- [x] Implement `Error` type (core)
+- [x] Define `ErrorKind` (Route/Parse/Timeout/NotFound/Internal/etc.)
+- [x] Implement `Display` for `Error`
+- [x] Implement `std::error::Error` for `Error`
+- [x] Define `Result<T>` alias
+- [x] Define canonical types
+- [x] Define `FeuRequest = http::Request<FeuBody>`
+- [x] Define `InnerResponse = http::Response<FeuBody>`
+- [x] Implement `FeuBody` (minimal)
+- [x] Add `FeuBody::Empty`
+- [x] Add `FeuBody::Bytes(bytes::Bytes)`
+- [x] Add `FeuBody::Text(String)`
+- [x] Add conversions into `FeuBody`
+- [x] Implement `From<()> for FeuBody`
+- [x] Implement `From<Bytes> for FeuBody`
+- [x] Implement `From<String> for FeuBody`
+- [x] Implement `From<&'static str> for FeuBody`
+- [x] Implement `FeuResponse` wrapper
+- [x] Add `pub struct FeuResponse(pub http::Response<FeuBody>)`
+- [x] Add `into_inner/as_inner/as_inner_mut`
+- [x] Add minimal constructors on `FeuResponse`
+- [x] Add `FeuResponse::empty(StatusCode)`
+- [x] Add `FeuResponse::text(...)` with content-type
+- [x] Add `FeuResponse::html(...)` with content-type
+- [x] Add `FeuResponse::redirect(location, code)` with Location header
+- [x] Add fluent methods on `FeuResponse`
+- [x] Add `with_status(code)` (non-mut style)
+- [x] Add `with_header(name, value)` (non-mut style)
+- [x] Add `with_content_type(mime)` (non-mut style)
+- [x] Implement `IntoResponse` trait
+- [x] Implement `IntoResponse for FeuResponse`
+- [x] Implement `IntoResponse for http::Response<FeuBody>`
+- [x] Implement `IntoResponse for (StatusCode, T: IntoResponse)`
+- [x] Implement `IntoResponse for Result<T: IntoResponse, Error>`
+- [x] Implement `Ctx` minimal (no routing params yet)
+- [x] Add `Ctx` fields: `req`, `extensions`, `pending_status`, `pending_headers`, `pending_content_type`
+- [x] Implement `c.req()`, `c.method()`, `c.path()`
+- [x] Implement `c.extensions()/extensions_mut()`
+- [x] Implement `c.insert<T>()` and `c.get<T>()`
+- [x] Implement A-plan pending response configuration (locked-in)
+- [x] Implement `c.status(code) -> &mut Ctx` that sets pending status
+- [x] Implement `c.header(name, value) -> &mut Ctx` that appends pending header
+- [x] Implement `c.content_type(mime) -> &mut Ctx` that sets pending content-type
+- [x] Implement pending consumption rule (locked-in)
+- [x] Implement internal method `c.take_pending()` that returns (status, headers, content-type) and resets them
+- [x] Implement response helpers on `Ctx`
+- [x] Implement `c.text(body) -> FeuResponse` consuming pending settings
+- [x] Implement `c.html(body) -> FeuResponse` consuming pending settings
+- [x] Implement `c.body(bytes) -> FeuResponse` consuming pending settings
+- [x] Implement `c.redirect(location) -> FeuResponse` consuming pending settings (default 302 unless pending overrides)
+- [x] Implement `c.not_found() -> FeuResponse` (simple 404)
+- [x] Implement `App` minimal
+- [x] Implement `App::new()`
+- [x] Define handler type erasure strategy (BoxFuture or trait object)
+- [x] Implement a minimal GET-only route table (temporary until router phase)
+- [x] Implement `app.get(path, handler)` using the temporary table
+- [x] Implement `app.handle(req, env, runtime)` minimal entrypoint
+- [x] Implement default 404 when route missing
+- [x] Add unit tests
+- [x] Test `c.status()+c.header()+c.text()` behavior (consumption + reset)
+- [x] Test `c.text()` content-type correctness
+- [x] Test `c.redirect()` sets Location header
+- [x] Test minimal `App` GET route returns expected response
+- [x] Ensure `no-default-features` build passes
 
 ---
 

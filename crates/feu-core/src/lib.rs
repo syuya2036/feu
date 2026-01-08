@@ -1,14 +1,17 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+// Modules are defined once here at the top
+pub mod app;
+pub mod ctx;
+pub mod error;
+pub mod handler;
+pub mod response;
+pub mod types;
+
+// Re-exports
+pub use app::App;
+pub use ctx::Ctx;
+pub use error::{Error, ErrorKind, Result};
+pub use response::IntoResponse;
+pub use types::{FeuBody, FeuRequest, FeuResponse};
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+mod tests;
