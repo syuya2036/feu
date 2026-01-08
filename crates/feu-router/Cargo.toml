@@ -1,6 +1,8 @@
 [package]
 name = "feu-router"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
+matchit = "0.7"
+http = "1.0"
