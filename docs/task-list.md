@@ -162,20 +162,20 @@
 - [x] Implement `RouterService` (closure in handle)
 - [x] Implement `AppService` pipeline builder (Next chaining)
 - [x] Implement `app.use(mw)` for built-in middleware layers
-- [ ] Implement `app.use_at(path, mw)` (Phase 4/Future)
+- [x] Implement `app.use_at(path, mw)` (Phase 4/Future)
 - [x] Implement `app.base_path` support
 - [x] Add middleware tests
 - [x] Test execution order
 - [x] Test short-circuiting
 - [x] Test base_path routing
 - [ ] Define path-scoped middleware matching approach (prefix match or router-based)
-- [ ] Implement `use_fn` (Hono-like middleware wrapper) (locked-in requirement)
-- [ ] Define `Next` wrapper type
-- [ ] Implement `Next::run(c: Ctx) -> Result<FeuResponse, Error>` calling inner service
-- [ ] Implement `use_fn` accepting `Fn(Ctx, Next) -> Future<Result<FeuResponse, Error>>`
-- [ ] Ensure user does not see Tower types in `use_fn` API
-- [ ] Ensure middleware supports before/after and short-circuit
-- [ ] Ensure ordering is deterministic (documented)
+- [x] Implement `use_fn` (Hono-like middleware wrapper)
+- [x] Define `Next` wrapper type
+- [x] Implement `Next::run(c: Ctx) -> Result<FeuResponse, Error>` calling inner service
+- [x] Implement `use_fn` accepting `Fn(Ctx, Next) -> Future<Result<FeuResponse, Error>>`
+- [x] Ensure user does not see Tower types in `use_fn` API
+- [x] Ensure middleware supports before/after and short-circuit
+- [x] Ensure ordering is deterministic (documented)
 - [ ] Implement `not_found` handler support
 - [ ] Implement `app.not_found(handler)` storing a fallback handler
 - [ ] Ensure not_found runs after router miss (after middleware or within pipeline; define)
