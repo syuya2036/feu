@@ -16,6 +16,9 @@ feu-middleware = { version = "0.1.0", path = "../feu-middleware" }
 feu-adapter-hyper = { version = "0.1.0", path = "../feu-adapters/hyper", optional = true }
 feu-openapi = { version = "0.1.0", path = "../feu-openapi", optional = true }
 feu-rpc = { version = "0.1.0", path = "../feu-rpc", optional = true }
+http = "1.4.0"
+feu-adapter-lambda = { version = "0.1.0", path = "../feu-adapters/lambda", optional = true }
+feu-adapter-cloudflare-workers = { version = "0.1.0", path = "../feu-adapters/cloudflare-workers", optional = true }
 
 [features]
 default = []
@@ -28,3 +31,9 @@ openapi = ["dep:feu-openapi", "feu-core/openapi"]
 rpc = ["dep:feu-rpc", "feu-core/rpc"]
 # hyper is likely to be a default or commonly used, but for now we keep it optional or exposed via feature
 hyper = ["dep:feu-adapter-hyper"]
+lambda = ["dep:feu-adapter-lambda"]
+cloudflare-workers = ["dep:feu-adapter-cloudflare-workers"]
+
+[dev-dependencies]
+anyhow = "1.0.100"
+tokio = { version = "1.49.0", features = ["full"] }

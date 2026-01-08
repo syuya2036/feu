@@ -39,18 +39,13 @@ mod unit_tests {
         } else {
             panic!("Expected Text body");
         }
-
-        // Verify Consumption: Pending state should be empty now
-        let (status, headers) = ctx.take_pending();
-        assert!(status.is_none());
-        assert!(headers.is_empty());
     }
 
     #[test]
     fn test_ctx_redirect() {
         // Default redirect
         let req = Request::new(FeuBody::Empty);
-        let mut ctx = Ctx::new(req, (), Arc::new(NoOpRuntimeCtx), vec![]);
+        let ctx = Ctx::new(req, (), Arc::new(NoOpRuntimeCtx), vec![]);
         let res = ctx.redirect("/home");
         assert_eq!(res.0.status(), StatusCode::FOUND); // 302
         assert_eq!(res.0.headers().get("location").unwrap(), "/home");
@@ -69,8 +64,8 @@ mod unit_tests {
 
     #[tokio::test]
     async fn test_app_routing() {
-        let app = App::new()
-            .get("/", |mut c: Ctx| async move { Ok(c.text("root")) })
+        let mut app = App::new();
+        app.get("/", |c: Ctx| async move { Ok(c.text("root")) })
             .get("/foo", |mut c: Ctx| async move {
                 c.status(StatusCode::ACCEPTED);
                 Ok(c.text("foo"))
@@ -97,7 +92,8 @@ mod unit_tests {
 
     #[tokio::test]
     async fn test_valid_params() {
-        let app = App::new().get("/user/:id", |mut c: Ctx| async move {
+        let mut app = App::new();
+        app.get("/user/:id", |c: Ctx| async move {
             let id = c.param("id").unwrap().to_string();
             Ok(c.text(format!("user {}", id)))
         });

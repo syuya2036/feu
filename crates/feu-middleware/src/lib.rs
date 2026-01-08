@@ -1,14 +1,40 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+use feu_core::ctx::Ctx;
+use feu_core::middleware::{BoxFuture, Middleware, Next};
+use feu_core::types::FeuResponse;
+
+pub mod logger {
+    use super::*;
+    pub fn default() -> impl Middleware {
+        struct Logger;
+        impl Middleware for Logger {
+            fn handle(
+                &self,
+                ctx: Ctx,
+                next: Next,
+            ) -> BoxFuture<feu_core::error::Result<FeuResponse>> {
+                Box::pin(next.run(ctx))
+            }
+        }
+        Logger
+    }
 }
 
-#[cfg(test)]
-mod tests {
+pub mod cors {
     use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    pub struct Cors;
+    impl Cors {
+        pub fn permissive() -> impl Middleware {
+            struct C;
+            impl Middleware for C {
+                fn handle(
+                    &self,
+                    ctx: Ctx,
+                    next: Next,
+                ) -> BoxFuture<feu_core::error::Result<FeuResponse>> {
+                    Box::pin(next.run(ctx))
+                }
+            }
+            C
+        }
     }
 }

@@ -56,12 +56,12 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         }
     }
 
-    pub fn base_path(mut self, path: &str) -> Self {
+    pub fn base_path(&mut self, path: &str) -> &mut Self {
         self.base_path = path.trim_end_matches('/').to_string();
         self
     }
 
-    pub fn use_mw<M>(mut self, middleware: M) -> Self
+    pub fn use_mw<M>(&mut self, middleware: M) -> &mut Self
     where
         M: Middleware<E>,
     {
@@ -69,8 +69,16 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         self
     }
 
+    /// Helper for functional middleware (Hono style).
+    pub fn use_fn<F>(&mut self, middleware: F) -> &mut Self
+    where
+        F: Middleware<E>,
+    {
+        self.use_mw(middleware)
+    }
+
     /// Registers a middleware that only runs if the path starts with `prefix`.
-    pub fn use_at<M>(mut self, prefix: &str, middleware: M) -> Self
+    pub fn use_at<M>(&mut self, prefix: &str, middleware: M) -> &mut Self
     where
         M: Middleware<E>,
     {
@@ -106,7 +114,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         }
     }
 
-    pub fn get<H>(mut self, path: &str, handler: H) -> Self
+    pub fn get<H>(&mut self, path: &str, handler: H) -> &mut Self
     where
         H: Handler<E>,
     {
@@ -115,7 +123,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         self
     }
 
-    pub fn post<H>(mut self, path: &str, handler: H) -> Self
+    pub fn post<H>(&mut self, path: &str, handler: H) -> &mut Self
     where
         H: Handler<E>,
     {
@@ -124,7 +132,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         self
     }
 
-    pub fn put<H>(mut self, path: &str, handler: H) -> Self
+    pub fn put<H>(&mut self, path: &str, handler: H) -> &mut Self
     where
         H: Handler<E>,
     {
@@ -133,7 +141,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         self
     }
 
-    pub fn delete<H>(mut self, path: &str, handler: H) -> Self
+    pub fn delete<H>(&mut self, path: &str, handler: H) -> &mut Self
     where
         H: Handler<E>,
     {
@@ -142,7 +150,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         self
     }
 
-    pub fn patch<H>(mut self, path: &str, handler: H) -> Self
+    pub fn patch<H>(&mut self, path: &str, handler: H) -> &mut Self
     where
         H: Handler<E>,
     {
@@ -151,7 +159,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         self
     }
 
-    pub fn head<H>(mut self, path: &str, handler: H) -> Self
+    pub fn head<H>(&mut self, path: &str, handler: H) -> &mut Self
     where
         H: Handler<E>,
     {
@@ -160,7 +168,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         self
     }
 
-    pub fn options<H>(mut self, path: &str, handler: H) -> Self
+    pub fn options<H>(&mut self, path: &str, handler: H) -> &mut Self
     where
         H: Handler<E>,
     {
@@ -169,7 +177,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         self
     }
 
-    pub fn any<H>(mut self, path: &str, handler: H) -> Self
+    pub fn any<H>(&mut self, path: &str, handler: H) -> &mut Self
     where
         H: Handler<E>,
     {
@@ -188,7 +196,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         self
     }
 
-    pub fn on<H>(mut self, methods: Vec<Method>, path: &str, handler: H) -> Self
+    pub fn on<H>(&mut self, methods: Vec<Method>, path: &str, handler: H) -> &mut Self
     where
         H: Handler<E>,
     {
@@ -200,7 +208,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
     }
 
     // Composition / Nesting
-    pub fn route(mut self, path: &str, sub_app: App<E>) -> Self {
+    pub fn route(&mut self, path: &str, sub_app: App<E>) -> &mut Self {
         let prefix = path.trim_end_matches('/');
 
         for (method, sub_path, handler) in sub_app.routes.iter() {
@@ -220,7 +228,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         self
     }
 
-    pub fn not_found<H>(mut self, handler: H) -> Self
+    pub fn not_found<H>(&mut self, handler: H) -> &mut Self
     where
         H: Handler<E>,
     {
@@ -228,7 +236,7 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
         self
     }
 
-    pub fn on_error<H>(mut self, handler: H) -> Self
+    pub fn on_error<H>(&mut self, handler: H) -> &mut Self
     where
         H: Handler<E>,
     {

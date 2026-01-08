@@ -21,8 +21,8 @@ impl Middleware for Logger {
 
 #[tokio::test]
 async fn test_middleware_execution_order() {
-    let app = App::new()
-        .use_mw(Logger)
+    let mut app = App::new();
+    app.use_mw(Logger)
         .use_mw(|mut c: Ctx, next: Next| async move {
             c.header("x-mw2-before", "1");
             let mut res = next.run(c).await?;
@@ -31,7 +31,7 @@ async fn test_middleware_execution_order() {
                 .insert("x-mw2-after", "1".parse().unwrap());
             Ok(res)
         })
-        .get("/test", |mut c: Ctx| async move { Ok(c.text("hello")) });
+        .get("/test", |c: Ctx| async move { Ok(c.text("hello")) });
 
     let req = Request::builder()
         .uri("/test")
@@ -49,8 +49,8 @@ async fn test_middleware_execution_order() {
 
 #[tokio::test]
 async fn test_middleware_short_circuit() {
-    let app = App::new()
-        .use_mw(|_c: Ctx, _next: Next| async move { Ok(FeuResponse::text("Short Circuit")) })
+    let mut app = App::new();
+    app.use_mw(|_c: Ctx, _next: Next| async move { Ok(FeuResponse::text("Short Circuit")) })
         .get("/test", |_| async {
             Ok(FeuResponse::text("Should not be reached"))
         });
@@ -70,9 +70,9 @@ async fn test_middleware_short_circuit() {
 
 #[tokio::test]
 async fn test_base_path() {
-    let app = App::new()
-        .base_path("/api/v1")
-        .get("/users", |mut c: Ctx| async move { Ok(c.text("users")) });
+    let mut app = App::new();
+    app.base_path("/api/v1")
+        .get("/users", |c: Ctx| async move { Ok(c.text("users")) });
 
     let req = Request::builder()
         .uri("/api/v1/users")
@@ -91,9 +91,10 @@ async fn test_base_path() {
 
 #[tokio::test]
 async fn test_not_found_handler() {
-    let app = App::new().not_found(|mut c: Ctx| async move {
-        Ok(c.text("Custom 404").with_status(StatusCode::NOT_FOUND))
-    });
+    let mut app = App::new();
+    app.not_found(
+        |c: Ctx| async move { Ok(c.text("Custom 404").with_status(StatusCode::NOT_FOUND)) },
+    );
 
     let req = Request::builder()
         .uri("/nothing")
@@ -111,16 +112,10 @@ async fn test_not_found_handler() {
 
 #[tokio::test]
 async fn test_use_at() {
-    let app = App::new()
-        .use_at("/admin", Logger)
-        .get(
-            "/admin/dash",
-            |mut c: Ctx| async move { Ok(c.text("dash")) },
-        )
-        .get(
-            "/public/home",
-            |mut c: Ctx| async move { Ok(c.text("home")) },
-        );
+    let mut app = App::new();
+    app.use_at("/admin", Logger)
+        .get("/admin/dash", |c: Ctx| async move { Ok(c.text("dash")) })
+        .get("/public/home", |c: Ctx| async move { Ok(c.text("home")) });
 
     let req = Request::builder()
         .uri("/admin/dash")
@@ -141,14 +136,14 @@ async fn test_use_at() {
 
 #[tokio::test]
 async fn test_on_error() {
-    let app = App::new()
-        .on_error(|mut c: Ctx| async move {
-            Ok(c.text("Custom Error")
-                .with_status(StatusCode::INTERNAL_SERVER_ERROR))
-        })
-        .get("/oops", |_| async {
-            Err::<FeuResponse, _>(crate::error::Error::new(crate::error::ErrorKind::Internal))
-        });
+    let mut app = App::new();
+    app.on_error(|c: Ctx| async move {
+        Ok(c.text("Custom Error")
+            .with_status(StatusCode::INTERNAL_SERVER_ERROR))
+    })
+    .get("/oops", |_| async {
+        Err::<FeuResponse, _>(crate::error::Error::new(crate::error::ErrorKind::Internal))
+    });
 
     let req = Request::builder()
         .uri("/oops")

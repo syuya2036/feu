@@ -5,11 +5,11 @@ use http::{Method, Request, StatusCode};
 
 #[tokio::test]
 async fn test_methods() {
-    let app = App::new()
-        .get("/get", |mut c: Ctx| async move { Ok(c.text("GET")) })
-        .post("/post", |mut c: Ctx| async move { Ok(c.text("POST")) })
-        .put("/put", |mut c: Ctx| async move { Ok(c.text("PUT")) })
-        .delete("/delete", |mut c: Ctx| async move { Ok(c.text("DELETE")) });
+    let mut app = App::new();
+    app.get("/get", |c: Ctx| async move { Ok(c.text("GET")) })
+        .post("/post", |c: Ctx| async move { Ok(c.text("POST")) })
+        .put("/put", |c: Ctx| async move { Ok(c.text("PUT")) })
+        .delete("/delete", |c: Ctx| async move { Ok(c.text("DELETE")) });
 
     let methods = vec![
         (Method::GET, "/get", "GET"),
@@ -36,7 +36,8 @@ async fn test_methods() {
 
 #[tokio::test]
 async fn test_any() {
-    let app = App::new().any("/all", |mut c: Ctx| async move {
+    let mut app = App::new();
+    app.any("/all", |c: Ctx| async move {
         let method = c.req().method().to_string();
         Ok(c.text(method))
     });
@@ -54,11 +55,12 @@ async fn test_any() {
 
 #[tokio::test]
 async fn test_composition() {
-    let api = App::new()
-        .get("/users", |mut c: Ctx| async move { Ok(c.text("users")) })
-        .get("/posts", |mut c: Ctx| async move { Ok(c.text("posts")) });
+    let mut api = App::new();
+    api.get("/users", |c: Ctx| async move { Ok(c.text("users")) })
+        .get("/posts", |c: Ctx| async move { Ok(c.text("posts")) });
 
-    let app = App::new().route("/api", api);
+    let mut app = App::new();
+    app.route("/api", api);
 
     // GET /api/users
     let req = Request::builder()
@@ -88,7 +90,8 @@ async fn test_composition() {
 
 #[tokio::test]
 async fn test_nested_wildcard() {
-    let app = App::new().get("/static/*path", |mut c: Ctx| async move {
+    let mut app = App::new();
+    app.get("/static/*path", |c: Ctx| async move {
         let path = c.param("path").unwrap_or("").to_string();
         Ok(c.text(format!("static: {}", path)))
     });

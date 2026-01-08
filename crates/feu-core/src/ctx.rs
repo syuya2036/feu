@@ -110,34 +110,27 @@ impl<E: Clone + Send + Sync + 'static> Ctx<E> {
         res
     }
 
-    pub fn text(&mut self, body: impl Into<String>) -> FeuResponse {
+    pub fn text(mut self, body: impl Into<String>) -> FeuResponse {
         let res = FeuResponse::text(body);
         self.apply_pending(res)
     }
 
-    pub fn html(&mut self, body: impl Into<String>) -> FeuResponse {
+    pub fn html(mut self, body: impl Into<String>) -> FeuResponse {
         let res = FeuResponse::html(body);
         self.apply_pending(res)
     }
 
     // pub fn json<T: serde::Serialize>(&mut self, value: T) -> Result<FeuResponse> {
-    //     // Requires "json" feature usually, but for minimal kernel we might skip or use serde_json if allowed.
-    //     // We didn't enable serde_json in Cargo.toml yet for core.
-    //     // Let's implement basic json stringification if the user provides a string,
-    //     // but real `json` helper requires feature gate.
-    //     // For now, let's omit `json` helper or require the feature.
-    //     // The plan said "json feature" later.
-    //     // We will implement `json` in Phase 4.
-    //     unimplemented!("Enable 'json' feature for this")
+    //     ...
     // }
 
     // Manual raw body
-    pub fn body(&mut self, body: impl Into<FeuBody>) -> FeuResponse {
+    pub fn body(mut self, body: impl Into<FeuBody>) -> FeuResponse {
         let res = FeuResponse(http::Response::new(body.into()));
         self.apply_pending(res)
     }
 
-    pub fn redirect(&mut self, location: impl Into<String>) -> FeuResponse {
+    pub fn redirect(mut self, location: impl Into<String>) -> FeuResponse {
         // Default to 302 Found, unless pending status is set
         let status = self.pending_status.unwrap_or(StatusCode::FOUND);
         // Reset pending status so apply_pending doesn't override it effectively (or does it?)

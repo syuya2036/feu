@@ -44,10 +44,11 @@ where
         .uri(uri.as_str());
 
     for (k, v) in req.headers() {
-        if let Ok(val) = http::HeaderValue::from_str(&v) {
-            if let Ok(name) = http::HeaderName::from_bytes(k.as_bytes()) {
-                builder = builder.header(name, val);
-            }
+        if let (Ok(val), Ok(name)) = (
+            http::HeaderValue::from_str(&v),
+            http::HeaderName::from_bytes(k.as_bytes()),
+        ) {
+            builder = builder.header(name, val);
         }
     }
 
@@ -77,7 +78,7 @@ where
         FeuBody::Bytes(b) => worker::ResponseBody::Body(b.to_vec()),
     };
 
-    let mut w_res = WorkerResponse::from_body(worker_body).map_err(|e| worker::Error::from(e))?;
+    let w_res = WorkerResponse::from_body(worker_body)?;
     let mut w_res = w_res.with_status(parts.status.as_u16());
 
     let h = w_res.headers_mut();
