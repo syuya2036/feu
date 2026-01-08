@@ -1,14 +1,29 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+pub use feu_core::app::App;
+pub use feu_core::ctx::Ctx;
+pub use feu_core::error::{Error, Result};
+pub use feu_core::rt;
+pub use feu_core::types::{FeuBody, FeuRequest, FeuResponse};
+
+// Re-export http types for convenience
+pub use http::Method;
+pub use http::StatusCode;
+
+pub mod prelude {
+    pub use super::{App, Ctx, FeuBody, FeuResponse, Method, StatusCode};
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub mod middleware {
+    pub use feu_core::middleware::{Middleware, Next};
+    pub use feu_middleware::*;
+}
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+pub mod adapters {
+    #[cfg(feature = "hyper")]
+    pub use feu_adapter_hyper as hyper;
+
+    #[cfg(feature = "lambda")]
+    pub use feu_adapter_lambda as lambda;
+
+    #[cfg(feature = "cloudflare-workers")]
+    pub use feu_adapter_cloudflare_workers as cloudflare_workers;
 }

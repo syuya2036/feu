@@ -11,6 +11,7 @@ pub struct RouteMatch {
     pub params: Vec<(String, String)>,
 }
 
+#[derive(Clone)]
 pub struct MethodRouter {
     routers: HashMap<Method, MatchitRouter<HandlerId>>,
     // Fallback? Not here, handled in App usually.

@@ -1,14 +1,11 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+use feu_core::app::App;
+use std::net::ToSocketAddrs;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+pub async fn serve<E, A>(_app: App<E>, _addr: A) -> feu_core::error::Result<()>
+where
+    E: Clone + Send + Sync + 'static,
+    A: ToSocketAddrs + Send,
+{
+    // stub
+    Ok(())
 }

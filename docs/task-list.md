@@ -119,9 +119,6 @@
 
 ## Phase 2 — Router Engine (Fast Matching + Params) & Full Method API
 
-- [ ] Create `feu-router` crate API surface
-- [ ] Define `Router` trait (method+path -> match)
-- [ ] Define `HandlerId` type (stable index)
 - [x] Create `feu-router` crate API surface
 - [x] Define `Router` trait (method+path -> match)
 - [x] Define `HandlerId` type (stable index)
@@ -130,83 +127,75 @@
 - [x] Implement `Params::get(name) -> Option<&str>`
 - [x] Implement fast router backend (radix-trie style; matchit-like)
 - [x] Implement per-method router tables (GET/POST/PUT/DELETE/PATCH/OPTIONS/HEAD)
-- [x] Implement `insert(method, path, handler_id)`
-- [x] Implement `recognize(method, path) -> RouteMatch`
-- [x] Support `:param` capture
-- [x] Support wildcard `*` capture if desired (define semantics)
-- [x] Implement `feu-router`
-- [x] Add `matchit` dependency
-- [x] Define `MethodRouter` struct
-- [x] Define `Router` wrapper (optional, or just expose `MethodRouter`)
-- [x] Integrate `feu-router` into `feu-core`
-- [x] Add `feu-router` dependency to `feu-core`
-- [x] Implement `App` using `MethodRouter` instead of `Vec`
-- [x] Implement `HandlerRegistry` (store `Arc<dyn Handler>` in `Vec`, router stores indices/IDs)
-- [x] Integrate router into `App`
+- [x] Implement insert(method, path, handler_id)
+- [x] Implement recognize(method, path) -> RouteMatch
+- [x] Support :param capture
+- [x] Support wildcard * capture
+- [x] Integrate router into App
 - [x] Replace temporary GET-only table with router backend
-- [x] Implement handler registry in `App` (Vec of handlers)
-- [x] Update `App::handle` to call router and dispatch handler by id
-- [x] Add param support to `Ctx`
-- [x] Add `Ctx` field: `params: Params`
-- [x] Implement `c.param(key)`
-- [x] Implement `c.param(name) -> Result<String, Error>` using params
-- [ ] Decide param conversion rules (string-only first; typed later via extractors)
-- [x] Expand routing API
-- [x] Add `app.post/put/delete/patch/options/head`
-- [x] Add `app.any`
-- [x] Add `app.on(methods, path, handler)`
-- [x] Add composition API
-- [x] Add `app.route(prefix, sub_app)` (nesting)
-- [ ] Add `app.base_path(prefix)`
-- [ ] Define route merging rules (prefix normalization, slash joining)
-- [ ] Add 404 customization hooks stubs (real handlers in Phase 3)
-- [ ] Add router tests
-- [ ] Test static path match
-- [ ] Test param match `:id`
-- [ ] Test wildcard match `*` if enabled
-- [ ] Test method separation (same path different methods)
-- [ ] Test nesting via `route(prefix, sub_app)`
-- [ ] Validate `c.param("id")` returns expected value
+- [x] Implement handler registry in App (Vec of handlers)
+- [x] Update App::handle to call router and dispatch handler by id
+- [x] Add param support to Ctx
+- [x] Implement c.param(key)
+- [x] Decide param conversion rules (string-only first)
+- [x] Expand routing API (post, put, delete, etc.)
+- [x] Add app.any and app.on
+- [x] Add composition API (app.route)
+- [ ] Add app.base_path(prefix) (Optional/Phase 3)
+- [x] Define route merging rules
+- [ ] Add 404 customization hooks (Phase 3)
+- [x] Add router tests
+- [x] Test static path match
+- [x] Test param match :id
+- [x] Test wildcard match *
+- [x] Test nested routes
+- [x] Test all methods
+- [x] Validate c.param("id") returns expected value
 
 ---
 
 ## Phase 3 — Middleware Engine (Tower Core) + Hono-like `use_fn` Wrapper + Error Hooks
 
-- [ ] Choose internal middleware architecture (Tower-like Service/Layer)
-- [ ] Define internal `Service` trait bounds and response future type
-- [ ] Define internal `Layer` composition strategy
-- [ ] Implement `RouterService` (route -> handler dispatch service)
-- [ ] Implement `AppService` pipeline builder that wraps RouterService with middleware layers
-- [ ] Implement `app.use(mw)` for built-in middleware layers
-- [ ] Implement `app.use_at(path, mw)` (path-scoped middleware)
-- [ ] Define path-scoped middleware matching approach (prefix match or router-based)
-- [ ] Implement `use_fn` (Hono-like middleware wrapper) (locked-in requirement)
-- [ ] Define `Next` wrapper type
-- [ ] Implement `Next::run(c: Ctx) -> Result<FeuResponse, Error>` calling inner service
-- [ ] Implement `use_fn` accepting `Fn(Ctx, Next) -> Future<Result<FeuResponse, Error>>`
-- [ ] Ensure user does not see Tower types in `use_fn` API
-- [ ] Ensure middleware supports before/after and short-circuit
-- [ ] Ensure ordering is deterministic (documented)
-- [ ] Implement `not_found` handler support
-- [ ] Implement `app.not_found(handler)` storing a fallback handler
-- [ ] Ensure not_found runs after router miss (after middleware or within pipeline; define)
-- [ ] Implement `on_error` handler support
-- [ ] Implement `app.on_error(handler)` storing global error handler
-- [ ] Define error propagation policy through middleware
-- [ ] Define default error response when on_error missing
-- [ ] Add Env/Runtime hooks framework
-- [ ] Introduce `App<Env, State>` generics (or equivalent)
-- [ ] Add `RuntimeCtx` trait
-- [ ] Add no-op `RuntimeCtx` implementation
-- [ ] Provide `Ctx::env()` and `Ctx::runtime()`
-- [ ] Update adapters entrypoint signature to pass env+runtime
-- [ ] Add middleware engine tests
-- [ ] Test before header injection affects final response (via pending or response mutation)
-- [ ] Test after response mutation (e.g., add header on returned response)
-- [ ] Test short-circuit returns early without calling next
-- [ ] Test on_error catches handler error
-- [ ] Test not_found handler returns custom response
-- [ ] Confirm `use_fn` does not leak internal types (public API check via docs)
+- [x] Choose internal middleware architecture (Tower-like Service/Layer)
+- [x] Define internal `Service` trait bounds (Next/BoxFuture)
+- [x] Define internal `Layer` composition strategy (App::use_mw)
+- [x] Implement `RouterService` (closure in handle)
+- [x] Implement `AppService` pipeline builder (Next chaining)
+- [x] Implement `app.use(mw)` for built-in middleware layers
+- [x] Implement `app.use_at(path, mw)` (Phase 4/Future)
+- [x] Implement `app.base_path` support
+- [x] Add middleware tests
+- [x] Test execution order
+- [x] Test short-circuiting
+- [x] Test base_path routing
+- [x] Define path-scoped middleware matching approach (use_at wrapper middleware)
+- [x] Implement `use_fn` (Hono-like middleware wrapper)
+- [x] Define `Next` wrapper type
+- [x] Implement `Next::run(c: Ctx) -> Result<FeuResponse, Error>` calling inner service
+- [x] Implement `use_fn` accepting `Fn(Ctx, Next) -> Future<Result<FeuResponse, Error>>`
+- [x] Ensure user does not see Tower types in `use_fn` API
+- [x] Ensure middleware supports before/after and short-circuit
+- [x] Ensure ordering is deterministic (documented)
+- [x] Implement `not_found` handler support
+- [x] Implement `app.not_found(handler)` storing a fallback handler
+- [x] Ensure not_found runs after router miss (after middleware or within pipeline; define)
+- [x] Implement `on_error` handler support
+- [x] Implement `app.on_error(handler)` storing global error handler
+- [x] Define error propagation policy through middleware
+- [x] Define default error response when on_error missing
+- [x] Add Env/Runtime hooks framework
+- [x] Introduce `App<Env, State>` generics (or equivalent)
+- [x] Add `RuntimeCtx` trait
+- [x] Add no-op `RuntimeCtx` implementation
+- [x] Provide `Ctx::env()` and `Ctx::runtime()`
+- [x] Update adapters entrypoint signature to pass env+runtime
+- [x] Add middleware engine tests
+- [x] Test before header injection affects final response (via pending or response mutation)
+- [x] Test after response mutation (e.g., add header on returned response)
+- [x] Test short-circuit returns early without calling next
+- [x] Test on_error catches handler error
+- [x] Test not_found handler returns custom response
+- [x] Confirm `use_fn` does not leak internal types (public API check via docs)
 
 ---
 

@@ -4,6 +4,7 @@ pub mod ctx;
 pub mod error;
 pub mod handler;
 pub mod response;
+pub mod rt;
 pub mod types;
 
 // Re-exports
@@ -17,3 +18,9 @@ pub use types::{FeuBody, FeuRequest, FeuResponse};
 mod tests;
 #[cfg(test)]
 mod tests_router;
+
+pub mod middleware;
+pub use middleware::{Middleware, Next};
+
+#[cfg(test)]
+mod tests_middleware;

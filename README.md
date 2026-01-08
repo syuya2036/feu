@@ -51,8 +51,9 @@ async fn main() -> anyhow::Result<()> {
 
 ```rust
 app.get("/users/:id", |c: Ctx| async move {
-    let id: String = c.param("id")?;
-    Ok(c.json(serde_json::json!({ "id": id })))
+    let id = c.param("id").unwrap_or("0");
+    // c.text consumes the context
+    Ok(c.text(format!("User ID: {}", id)))
 });
 ```
 
@@ -61,8 +62,8 @@ app.get("/users/:id", |c: Ctx| async move {
 ```rust
 use feu::middleware::{logger, cors};
 
-app.use(logger::default());
-app.use(cors::Cors::permissive());
+app.use_mw(logger::default());
+app.use_mw(cors::Cors::permissive());
 
 app.get("/healthz", |c: Ctx| async move {
     Ok(c.text("ok"))
@@ -87,7 +88,8 @@ That gives the classic Hono-style flow:
 app.post("/posts", |mut c: Ctx| async move {
     c.status(StatusCode::CREATED);
     c.header("x-created", "1");
-    Ok(c.json(serde_json::json!({ "ok": true })))
+    // c.json is available with "json" feature. For now using text:
+    Ok(c.text("{\"ok\": true}"))
 });
 ```
 
@@ -102,14 +104,15 @@ Internally, feu composes middleware using a Tower-like `Service/Layer` pipeline.
 Externally, users can write middleware in a Hono-ish style:
 
 ```rust
-app.use_fn(|mut c: Ctx, next| async move {
+app.use_fn(|mut c: Ctx, next: feu::middleware::Next| async move {
     // before
     c.header("x-before", "1");
 
     let mut res = next.run(c).await?;
 
     // after
-    res = res.with_header("x-after", "1");
+    // headers must be parsed types
+    res = res.with_header("x-after".parse().unwrap(), "1".parse().unwrap());
     Ok(res)
 });
 ```
@@ -134,7 +137,7 @@ You never touch Tower types directly—`next` is a small wrapper around the inte
   * `mount(prefix, service)` (advanced / later)
 * Middleware:
 
-  * `use(mw)` (global)
+  * `use_mw(mw)` (global)
   * `use_at(path, mw)` (scoped)
   * `use_fn(|c, next| ...)` (Hono-style functional middleware)
 * Errors:
@@ -152,7 +155,7 @@ Request access:
 * `c.req() -> &http::Request<FeuBody>`
 * `c.method()`, `c.path()`
 * `c.query("k") -> Option<&str>`
-* `c.param("id") -> Result<String, Error>`
+* `c.param("id") -> Option<&str>`
 
 Type-safe request-scoped storage (TypeMap):
 
