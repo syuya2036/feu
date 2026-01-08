@@ -15,6 +15,8 @@ pub struct App {
     // Actually, if we merge, we have to register handlers into `self.handlers` producing NEW IDs,
     // and then insert into `self.router`.
     // So we just need the list of (Method, Path, Handler).
+    // Type alias for route matching info: Method, Path, Handler
+    #[allow(clippy::type_complexity)]
     routes: Arc<Vec<(Method, String, Arc<dyn Handler>)>>,
     middlewares: Arc<Vec<Arc<dyn Middleware>>>,
     base_path: String,
