@@ -15,3 +15,5 @@ pub use types::{FeuBody, FeuRequest, FeuResponse};
 
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod tests_router;
