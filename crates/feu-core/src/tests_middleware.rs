@@ -37,7 +37,7 @@ async fn test_middleware_execution_order() {
         .uri("/test")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
 
     assert_eq!(res.0.status(), StatusCode::OK);
     let h = res.0.headers();
@@ -59,7 +59,7 @@ async fn test_middleware_short_circuit() {
         .uri("/test")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
 
     if let FeuBody::Text(s) = res.0.body() {
         assert_eq!(s, "Short Circuit");
@@ -78,14 +78,14 @@ async fn test_base_path() {
         .uri("/api/v1/users")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
     assert_eq!(res.0.status(), StatusCode::OK);
 
     let req = Request::builder()
         .uri("/users")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
     assert_eq!(res.0.status(), StatusCode::NOT_FOUND);
 }
 
@@ -99,7 +99,7 @@ async fn test_not_found_handler() {
         .uri("/nothing")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
 
     assert_eq!(res.0.status(), StatusCode::NOT_FOUND);
     if let FeuBody::Text(s) = res.0.body() {
@@ -126,7 +126,7 @@ async fn test_use_at() {
         .uri("/admin/dash")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
     let h = res.0.headers();
     assert!(h.contains_key("x-logger-before"));
 
@@ -134,7 +134,31 @@ async fn test_use_at() {
         .uri("/public/home")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
     let h = res.0.headers();
     assert!(!h.contains_key("x-logger-before"));
+}
+
+#[tokio::test]
+async fn test_on_error() {
+    let app = App::new()
+        .on_error(|mut c: Ctx| async move {
+            Ok(c.text("Custom Error")
+                .with_status(StatusCode::INTERNAL_SERVER_ERROR))
+        })
+        .get("/oops", |_| async {
+            Err::<FeuResponse, _>(crate::error::Error::new(crate::error::ErrorKind::Internal))
+        });
+
+    let req = Request::builder()
+        .uri("/oops")
+        .body(FeuBody::Empty)
+        .unwrap();
+    let res = app.handle(req, ()).await.unwrap();
+    assert_eq!(res.0.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    if let FeuBody::Text(s) = res.0.body() {
+        assert_eq!(s, "Custom Error");
+    } else {
+        panic!("Expected text");
+    }
 }

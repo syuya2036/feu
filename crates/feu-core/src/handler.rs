@@ -7,17 +7,18 @@ use std::pin::Pin;
 
 pub type BoxFuture<T> = Pin<Box<dyn Future<Output = T> + Send>>;
 
-pub trait Handler: Send + Sync + 'static {
-    fn call(&self, ctx: Ctx) -> BoxFuture<Result<FeuResponse>>;
+pub trait Handler<E = ()>: Send + Sync + 'static {
+    fn call(&self, ctx: Ctx<E>) -> BoxFuture<Result<FeuResponse>>;
 }
 
-impl<F, Fut, Res> Handler for F
+impl<F, Fut, Res, E> Handler<E> for F
 where
-    F: Fn(Ctx) -> Fut + Send + Sync + 'static,
+    F: Fn(Ctx<E>) -> Fut + Send + Sync + 'static,
     Fut: Future<Output = Result<Res>> + Send + 'static,
     Res: IntoResponse,
+    E: Send + Sync + 'static,
 {
-    fn call(&self, ctx: Ctx) -> BoxFuture<Result<FeuResponse>> {
+    fn call(&self, ctx: Ctx<E>) -> BoxFuture<Result<FeuResponse>> {
         let fut = (self)(ctx);
         Box::pin(async move {
             let res = fut.await?;

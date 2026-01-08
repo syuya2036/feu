@@ -24,7 +24,7 @@ async fn test_methods() {
             .uri(path)
             .body(FeuBody::Empty)
             .unwrap();
-        let res = app.handle(req).await.unwrap();
+        let res = app.handle(req, ()).await.unwrap();
         assert_eq!(res.0.status(), StatusCode::OK);
         if let FeuBody::Text(s) = res.0.body() {
             assert_eq!(s, expected);
@@ -46,7 +46,7 @@ async fn test_any() {
         .uri("/all")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
     if let FeuBody::Text(s) = res.0.body() {
         assert_eq!(s, "POST");
     }
@@ -65,7 +65,7 @@ async fn test_composition() {
         .uri("/api/users")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
     assert_eq!(res.0.status(), StatusCode::OK);
     // body check omitted for brevity, expecting OK is good signal match worked
 
@@ -74,7 +74,7 @@ async fn test_composition() {
         .uri("/api/posts")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
     assert_eq!(res.0.status(), StatusCode::OK);
 
     // GET /users (should fail)
@@ -82,7 +82,7 @@ async fn test_composition() {
         .uri("/users")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
     assert_eq!(res.0.status(), StatusCode::NOT_FOUND);
 }
 
@@ -97,7 +97,7 @@ async fn test_nested_wildcard() {
         .uri("/static/css/style.css")
         .body(FeuBody::Empty)
         .unwrap();
-    let res = app.handle(req).await.unwrap();
+    let res = app.handle(req, ()).await.unwrap();
     if let FeuBody::Text(s) = res.0.body() {
         assert_eq!(s, "static: css/style.css");
     }

@@ -183,19 +183,19 @@
 - [x] Implement `app.on_error(handler)` storing global error handler
 - [x] Define error propagation policy through middleware
 - [x] Define default error response when on_error missing
-- [ ] Add Env/Runtime hooks framework
-- [ ] Introduce `App<Env, State>` generics (or equivalent)
-- [ ] Add `RuntimeCtx` trait
-- [ ] Add no-op `RuntimeCtx` implementation
-- [ ] Provide `Ctx::env()` and `Ctx::runtime()`
-- [ ] Update adapters entrypoint signature to pass env+runtime
-- [ ] Add middleware engine tests
-- [ ] Test before header injection affects final response (via pending or response mutation)
-- [ ] Test after response mutation (e.g., add header on returned response)
-- [ ] Test short-circuit returns early without calling next
-- [ ] Test on_error catches handler error
-- [ ] Test not_found handler returns custom response
-- [ ] Confirm `use_fn` does not leak internal types (public API check via docs)
+- [x] Add Env/Runtime hooks framework
+- [x] Introduce `App<Env, State>` generics (or equivalent)
+- [x] Add `RuntimeCtx` trait
+- [x] Add no-op `RuntimeCtx` implementation
+- [x] Provide `Ctx::env()` and `Ctx::runtime()`
+- [x] Update adapters entrypoint signature to pass env+runtime
+- [x] Add middleware engine tests
+- [x] Test before header injection affects final response (via pending or response mutation)
+- [x] Test after response mutation (e.g., add header on returned response)
+- [x] Test short-circuit returns early without calling next
+- [x] Test on_error catches handler error
+- [x] Test not_found handler returns custom response
+- [x] Confirm `use_fn` does not leak internal types (public API check via docs)
 
 ---
 

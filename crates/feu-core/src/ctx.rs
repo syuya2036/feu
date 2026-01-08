@@ -1,23 +1,37 @@
+use crate::rt::RuntimeCtx;
 use crate::types::{FeuBody, FeuRequest, FeuResponse};
 use http::{HeaderName, HeaderValue, StatusCode};
+use std::sync::Arc;
 
 /// `Ctx` (Context) for the request/response lifecycle.
 ///
 /// Follows the "A-plan" design:
 /// - `status(...)` and `header(...)` set pending state.
 /// - Response helpers like `text(...)` consume this pending state.
-pub struct Ctx {
+pub struct Ctx<E = ()> {
     pub req: FeuRequest,
+    pub env: E,
+    pub runtime: Arc<dyn RuntimeCtx>,
+    pub error: Option<Box<dyn std::error::Error + Send + Sync>>,
+
     // Extensions and other fields will go here
     pub(crate) pending_status: Option<StatusCode>,
     pub(crate) pending_headers: http::HeaderMap,
     pub(crate) params: Vec<(String, String)>,
 }
 
-impl Ctx {
-    pub fn new(req: FeuRequest, params: Vec<(String, String)>) -> Self {
+impl<E: Clone + Send + Sync + 'static> Ctx<E> {
+    pub fn new(
+        req: FeuRequest,
+        env: E,
+        runtime: Arc<dyn RuntimeCtx>,
+        params: Vec<(String, String)>,
+    ) -> Self {
         Self {
             req,
+            env,
+            runtime,
+            error: None,
             pending_status: None,
             pending_headers: http::HeaderMap::new(),
             params,
