@@ -12,38 +12,38 @@
 
 ## Phase 0 — Repo & Workspace Foundation
 
-- [ ] Create workspace root `Cargo.toml` with members
-- [ ] Create crate skeletons
-- [ ] Create `crates/feu` (user-facing re-export/prelude)
-- [ ] Create `crates/feu-core` (App/Ctx/Response/Middleware wrapper)
-- [ ] Create `crates/feu-router` (fast router backend)
-- [ ] Create `crates/feu-middleware` (built-in middleware set)
-- [ ] Create `crates/feu-adapters/hyper`
-- [ ] Create `crates/feu-adapters/lambda` (stub)
-- [ ] Create `crates/feu-adapters/cloudflare-workers` (stub)
-- [ ] Create `crates/feu-openapi` (stub, gated)
-- [ ] Create `crates/feu-rpc` (stub, gated)
-- [ ] Create `crates/feu-cli` (stub)
-- [ ] Add repository files
-- [ ] Add `README.md` (spec README aligned to locked-in design)
-- [ ] Add `CHANGELOG.md` (Keep a Changelog)
-- [ ] Add `LICENSE` (choose MIT/Apache-2.0/dual)
-- [ ] Add `.gitignore` (Rust + editors)
-- [ ] Add formatting + lint configs
-- [ ] Add `rustfmt.toml` (optional)
-- [ ] Decide clippy policy and document it
-- [ ] Add CI workflow
-- [ ] Add `cargo fmt --check` to CI
-- [ ] Add `cargo clippy -- -D warnings` to CI
-- [ ] Add `cargo test --workspace` to CI
-- [ ] Add `cargo test --workspace --all-features` to CI
-- [ ] Add `cargo test --workspace --no-default-features` to CI
-- [ ] Add `cargo doc --workspace` to CI (optional warn-as-error)
-- [ ] Establish feature policy (document in `crates/feu/Cargo.toml`)
-- [ ] Ensure default features are minimal core
-- [ ] Add feature flags placeholders: `json`, `cookie`, `compress`, `streaming`, `schema`, `openapi`, `rpc`
-- [ ] Create `docs/` folder with placeholders (architecture/middleware/adapters/openapi/rpc)
-- [ ] Confirm workspace builds with `cargo build` and passes CI locally
+- [x] Create workspace root `Cargo.toml` with members
+- [x] Create crate skeletons
+- [x] Create `crates/feu` (user-facing re-export/prelude)
+- [x] Create `crates/feu-core` (App/Ctx/Response/Middleware wrapper)
+- [x] Create `crates/feu-router` (fast router backend)
+- [x] Create `crates/feu-middleware` (built-in middleware set)
+- [x] Create `crates/feu-adapters/hyper`
+- [x] Create `crates/feu-adapters/lambda` (stub)
+- [x] Create `crates/feu-adapters/cloudflare-workers` (stub)
+- [x] Create `crates/feu-openapi` (stub, gated)
+- [x] Create `crates/feu-rpc` (stub, gated)
+- [x] Create `crates/feu-cli` (stub)
+- [x] Add repository files
+- [x] Add `README.md` (spec README aligned to locked-in design)
+- [x] Add `CHANGELOG.md` (Keep a Changelog)
+- [x] Add `LICENSE` (choose MIT)
+- [x] Add `.gitignore` (Rust + editors)
+- [x] Add formatting + lint configs
+- [x] Add `rustfmt.toml` (optional)
+- [x] Decide clippy policy and document it
+- [x] Add CI workflow
+- [x] Add `cargo fmt --check` to CI
+- [x] Add `cargo clippy -- -D warnings` to CI
+- [x] Add `cargo test --workspace` to CI
+- [x] Add `cargo test --workspace --all-features` to CI
+- [x] Add `cargo test --workspace --no-default-features` to CI
+- [x] Add `cargo doc --workspace` to CI (optional warn-as-error)
+- [x] Establish feature policy (document in `crates/feu/Cargo.toml`)
+- [x] Ensure default features are minimal core
+- [x] Add feature flags placeholders: `json`, `cookie`, `compress`, `streaming`, `schema`, `openapi`, `rpc`
+- [x] Create `docs/` folder with placeholders (architecture/middleware/adapters/openapi/rpc)
+- [x] Confirm workspace builds with `cargo build` and passes CI locally
 
 ---
 

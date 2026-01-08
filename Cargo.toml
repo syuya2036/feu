@@ -1,0 +1,14 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/feu",
+    "crates/feu-core",
+    "crates/feu-router",
+    "crates/feu-middleware",
+    "crates/feu-adapters/hyper",
+    "crates/feu-adapters/lambda",
+    "crates/feu-adapters/cloudflare-workers",
+    "crates/feu-openapi",
+    "crates/feu-rpc",
+    "crates/feu-cli",
+]

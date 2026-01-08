@@ -1,0 +1,30 @@
+[package]
+name = "feu"
+version = "0.1.0"
+edition = "2021"
+description = "A Hono-inspired, Rust Web Framework"
+license = "MIT"
+repository = "https://github.com/syuya2036/feu"
+
+[dependencies]
+# Core dependencies will go here
+feu-core = { version = "0.1.0", path = "../feu-core" }
+feu-router = { version = "0.1.0", path = "../feu-router" }
+feu-middleware = { version = "0.1.0", path = "../feu-middleware" }
+
+# Optional dependencies
+feu-adapter-hyper = { version = "0.1.0", path = "../feu-adapters/hyper", optional = true }
+feu-openapi = { version = "0.1.0", path = "../feu-openapi", optional = true }
+feu-rpc = { version = "0.1.0", path = "../feu-rpc", optional = true }
+
+[features]
+default = []
+json = []
+cookie = []
+compress = []
+streaming = []
+schema = []
+openapi = ["dep:feu-openapi", "feu-core/openapi"]
+rpc = ["dep:feu-rpc", "feu-core/rpc"]
+# hyper is likely to be a default or commonly used, but for now we keep it optional or exposed via feature
+hyper = ["dep:feu-adapter-hyper"]
