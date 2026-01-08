@@ -27,8 +27,12 @@ impl Default for PrettyJson {
 }
 
 #[cfg(feature = "json")]
-impl Middleware for PrettyJson {
-    fn handle(&self, ctx: Ctx, next: Next) -> BoxFuture<feu_core::error::Result<FeuResponse>> {
+impl<E: Clone + Send + Sync + 'static> Middleware<E> for PrettyJson {
+    fn handle(
+        &self,
+        ctx: Ctx<E>,
+        next: Next<E>,
+    ) -> BoxFuture<feu_core::error::Result<FeuResponse>> {
         // Check if query param present?
         // Basic check for ?pretty
         let should_pretty = ctx

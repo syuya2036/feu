@@ -43,7 +43,7 @@ async fn main() -> anyhow::Result<()> {
     });
 
     // Hyper serve
-    feu::adapters::hyper::serve(app, "0.0.0.0:3000").await?;
+    feu::adapters::hyper::serve(app, (), "0.0.0.0:3000").await?;
 
     Ok(())
 }

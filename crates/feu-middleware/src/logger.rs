@@ -18,8 +18,12 @@ impl Default for Logger {
     }
 }
 
-impl Middleware for Logger {
-    fn handle(&self, ctx: Ctx, next: Next) -> BoxFuture<feu_core::error::Result<FeuResponse>> {
+impl<E: Clone + Send + Sync + 'static> Middleware<E> for Logger {
+    fn handle(
+        &self,
+        ctx: Ctx<E>,
+        next: Next<E>,
+    ) -> BoxFuture<feu_core::error::Result<FeuResponse>> {
         Box::pin(async move {
             let start = Instant::now();
             let method = ctx.method().clone();
