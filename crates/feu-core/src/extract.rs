@@ -8,6 +8,7 @@ use std::mem;
 /// Trait for extracting data from the request.
 ///
 /// Types implementing this trait can be used as handler arguments.
+#[allow(async_fn_in_trait)]
 pub trait FromRequest<E>: Sized {
     /// Extract the value from the request.
     ///
