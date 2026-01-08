@@ -1,24 +1,32 @@
+pub mod auth_basic;
+pub mod auth_bearer;
 pub mod body_limit;
 #[cfg(feature = "compress")]
 pub mod compress;
 pub mod cors;
 pub mod etag;
 pub mod logger;
+pub mod method_override;
 #[cfg(feature = "json")]
 pub mod pretty_json;
 pub mod request_id;
 pub mod secure_headers;
 pub mod timeout;
+pub mod trailing_slash;
 
 // Re-exports
+pub use auth_basic::BasicAuth;
+pub use auth_bearer::BearerAuth;
 pub use body_limit::BodyLimit;
 #[cfg(feature = "compress")]
 pub use compress::Compress;
 pub use cors::Cors;
 pub use etag::Etag;
 pub use logger::Logger;
+pub use method_override::MethodOverride;
 #[cfg(feature = "json")]
 pub use pretty_json::PrettyJson;
 pub use request_id::RequestId;
 pub use secure_headers::SecureHeaders;
 pub use timeout::Timeout;
+pub use trailing_slash::TrailingSlash;

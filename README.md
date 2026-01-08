@@ -1,5 +1,7 @@
 # Feu — A Hono-inspired, Rust Web Framework
 
+[日本語版 README](README.ja.md)
+
 **feu** (pronounced “foo”) is a next-generation web framework that borrows the *feel* of **Hono**—tiny, fast, middleware-first, web-standards friendly—while leaning into Rust’s strengths: **type safety**, **composable services**, and **multi-runtime adapters**.
 
 This README describes the **intended public API and architecture** (a “spec-style README”) so implementation can track it.
