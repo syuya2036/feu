@@ -259,18 +259,18 @@
 - [x] Add `compress` feature
 - [x] Implement `compress` middleware (gzip first; br/deflate optional)
 - [x] Implement `body_limit` middleware (reject oversize)
-- [ ] Implement compatibility middleware
-- [ ] Implement `method_override` middleware
-- [ ] Implement `trailing_slash` middleware
+- [x] Implement compatibility middleware
+- [x] Implement `method_override` middleware
+- [x] Implement `trailing_slash` middleware
 - [ ] Implement DX/presentation middleware
 - [x] Implement `pretty_json` middleware (dev formatting policy)
 - [ ] Implement `language` middleware (locale negotiation)
 - [ ] Implement `context_storage` middleware/util (task-local access) + document caveats
 - [ ] Implement `combine` helper (compose multiple middleware)
 - [ ] Implement `jsx_renderer` hook (template adapter placeholder)
-- [ ] Implement auth middleware
-- [ ] Implement `auth_basic`
-- [ ] Implement `auth_bearer`
+- [x] Implement auth middleware
+- [x] Implement `auth_basic`
+- [x] Implement `auth_bearer`
 - [ ] Add `jwt` feature
 - [ ] Implement `jwt` verification middleware
 - [ ] Add `jwk` feature
@@ -282,9 +282,9 @@
 - [x] Test secure_headers adds expected headers
 - [x] Test timeout returns timeout response
 - [x] Test etag returns 304 when matched
-- [ ] Test compress modifies response encoding (feature)
-- [ ] Test body_limit rejects big payloads
-- [ ] Middleware docs (required)
+- [x] Test compress modifies response encoding (feature)
+- [x] Test body_limit rejects big payloads
+- [x] Middleware docs (required)
 - [ ] Write `docs/middleware.md` with one-line description per middleware
 - [ ] Add config options + minimal examples per middleware
 - [ ] Document ordering notes (e.g., compress after etag or vice versa policy)

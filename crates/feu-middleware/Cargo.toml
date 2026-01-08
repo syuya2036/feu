@@ -11,6 +11,7 @@ streaming = ["feu-core/streaming"]
 
 [dependencies]
 async-compression = { version = "0.4.36", features = ["gzip", "brotli", "deflate", "futures-io", "tokio"], optional = true }
+base64 = "0.22.1"
 bytes = "1.11.0"
 feu-core = { version = "0.1.0", path = "../feu-core" }
 futures-util = "0.3.31"
