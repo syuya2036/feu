@@ -1,6 +1,7 @@
 use feu_core::ctx::Ctx;
 use feu_core::middleware::{BoxFuture, Middleware, Next};
 use feu_core::types::{FeuBody, FeuResponse};
+#[cfg(feature = "streaming")]
 use futures_util::stream::StreamExt;
 use http::StatusCode;
 
@@ -77,8 +78,6 @@ impl Middleware for BodyLimit {
                 });
                 FeuBody::Stream(Box::pin(s))
             }
-            #[cfg(not(feature = "streaming"))]
-            b => b,
         };
 
         *ctx.req.body_mut() = new_body;

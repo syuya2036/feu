@@ -1,7 +1,7 @@
 use feu_core::ctx::Ctx;
 use feu_core::middleware::{BoxFuture, Middleware, Next};
 use feu_core::types::{FeuBody, FeuResponse};
-use futures_util::stream::{self, StreamExt, TryStreamExt};
+use futures_util::stream::{self, TryStreamExt};
 use http::header::{ACCEPT_ENCODING, CONTENT_ENCODING, CONTENT_LENGTH};
 use std::io;
 use tokio_util::io::{ReaderStream, StreamReader};
@@ -72,7 +72,7 @@ impl Middleware for Compress {
                     #[cfg(feature = "streaming")]
                     FeuBody::Stream(s) => {
                         // Map error to io::Error
-                        let s = s.map_err(|e| io::Error::new(io::ErrorKind::Other, e));
+                        let s = s.map_err(io::Error::other);
                         Box::pin(s)
                             as futures_util::stream::BoxStream<
                                 'static,

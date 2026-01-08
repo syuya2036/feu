@@ -1,6 +1,6 @@
 use feu_core::app::App;
 use feu_core::ctx::Ctx;
-use feu_core::types::FeuResponse;
+
 use feu_middleware::BodyLimit;
 use http::StatusCode;
 
