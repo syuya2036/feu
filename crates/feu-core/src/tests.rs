@@ -11,7 +11,7 @@ mod unit_tests {
     fn test_ctx_status_header_text_consumption() {
         // Setup
         let req = Request::new(FeuBody::Empty);
-        let mut ctx = Ctx::new(req);
+        let mut ctx = Ctx::new(req, vec![]);
 
         // A-plan: Configure pending state
         ctx.status(StatusCode::CREATED).header("x-foo", "bar");
@@ -48,7 +48,7 @@ mod unit_tests {
     #[test]
     fn test_ctx_redirect() {
         let req = Request::new(FeuBody::Empty);
-        let mut ctx = Ctx::new(req);
+        let mut ctx = Ctx::new(req, vec![]);
 
         // Default redirect
         let res = ctx.redirect("/home");
@@ -56,13 +56,13 @@ mod unit_tests {
         assert_eq!(res.0.headers().get("location").unwrap(), "/home");
 
         // Custom status redirect
-        let mut ctx = Ctx::new(Request::new(FeuBody::Empty));
+        let mut ctx = Ctx::new(Request::new(FeuBody::Empty), vec![]);
         ctx.status(StatusCode::MOVED_PERMANENTLY).redirect("/gone"); // 301
 
         // wait, we need to capture the response. The builder pattern `ctx.status(...)` returns `&mut Ctx`.
         // `redirect` returns `FeuResponse`.
 
-        let mut ctx = Ctx::new(Request::new(FeuBody::Empty));
+        let mut ctx = Ctx::new(Request::new(FeuBody::Empty), vec![]);
         ctx.status(StatusCode::MOVED_PERMANENTLY);
         let res = ctx.redirect("/gone");
 
@@ -98,5 +98,34 @@ mod unit_tests {
         let req = Request::builder().uri("/bar").body(FeuBody::Empty).unwrap();
         let res = app.handle(req).await.unwrap();
         assert_eq!(res.0.status(), StatusCode::NOT_FOUND);
+    }
+
+    #[tokio::test]
+    async fn test_valid_params() {
+        let app = App::new().get("/user/:id", |mut c: Ctx| async move {
+            let id = c.param("id").unwrap().to_string(); // copy string eagerly before consume? no, param returns &str from self.params.
+                                                         // Wait, c.text consumes self headers/status.
+                                                         // c.param reads self.params.
+                                                         // Does c.text consume everything?
+                                                         // c.text takes &mut self (not self).
+                                                         // But Handler::call takes `Ctx` (owned).
+                                                         // So closure takes `Ctx`.
+                                                         // c.param is &self.
+                                                         // c.text is &mut self -> FeuResponse.
+                                                         // Works.
+            Ok(c.text(format!("user {}", id)))
+        });
+
+        let req = Request::builder()
+            .uri("/user/123")
+            .body(FeuBody::Empty)
+            .unwrap();
+        let res = app.handle(req).await.unwrap();
+        assert_eq!(res.0.status(), StatusCode::OK);
+        if let FeuBody::Text(s) = res.0.body() {
+            assert_eq!(s, "user 123");
+        } else {
+            panic!("Expected text");
+        }
     }
 }

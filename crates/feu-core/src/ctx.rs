@@ -11,17 +11,16 @@ pub struct Ctx {
     // Extensions and other fields will go here
     pub(crate) pending_status: Option<StatusCode>,
     pub(crate) pending_headers: http::HeaderMap,
-    // Add simple any-map for middleware state
-    // For now using extensions on request is standard, but we might want a separate bag
-    // Let's stick to req extensions for now or add a simple map if needed.
+    pub(crate) params: Vec<(String, String)>,
 }
 
 impl Ctx {
-    pub fn new(req: FeuRequest) -> Self {
+    pub fn new(req: FeuRequest, params: Vec<(String, String)>) -> Self {
         Self {
             req,
             pending_status: None,
             pending_headers: http::HeaderMap::new(),
+            params,
         }
     }
 
@@ -33,6 +32,17 @@ impl Ctx {
     /// Access the request mutably
     pub fn req_mut(&mut self) -> &mut FeuRequest {
         &mut self.req
+    }
+
+    /// Get a path parameter by name
+    pub fn param(&self, key: &str) -> Option<&str> {
+        // Linear search is fine for small param sets
+        for (k, v) in &self.params {
+            if k == key {
+                return Some(v);
+            }
+        }
+        None
     }
 
     // --- Pending Response Configuration (A-plan) ---

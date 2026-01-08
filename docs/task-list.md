@@ -122,27 +122,39 @@
 - [ ] Create `feu-router` crate API surface
 - [ ] Define `Router` trait (method+path -> match)
 - [ ] Define `HandlerId` type (stable index)
-- [ ] Define `RouteMatch { handler_id, params }`
-- [ ] Define `Params` storage format (small vec of pairs)
-- [ ] Implement `Params::get(name) -> Option<&str>`
-- [ ] Implement fast router backend (radix-trie style; matchit-like)
-- [ ] Implement per-method router tables (GET/POST/PUT/DELETE/PATCH/OPTIONS/HEAD)
-- [ ] Implement `insert(method, path, handler_id)`
-- [ ] Implement `recognize(method, path) -> RouteMatch`
-- [ ] Support `:param` capture
-- [ ] Support wildcard `*` capture if desired (define semantics)
-- [ ] Integrate router into `App`
-- [ ] Replace temporary GET-only table with router backend
-- [ ] Implement handler registry in `App` (Vec of handlers)
-- [ ] Update `App::handle` to call router and dispatch handler by id
-- [ ] Add param support to `Ctx`
-- [ ] Add `Ctx` field: `params: Params`
-- [ ] Implement `c.param(name) -> Result<String, Error>` using params
+- [x] Create `feu-router` crate API surface
+- [x] Define `Router` trait (method+path -> match)
+- [x] Define `HandlerId` type (stable index)
+- [x] Define `RouteMatch { handler_id, params }`
+- [x] Define `Params` storage format (small vec of pairs)
+- [x] Implement `Params::get(name) -> Option<&str>`
+- [x] Implement fast router backend (radix-trie style; matchit-like)
+- [x] Implement per-method router tables (GET/POST/PUT/DELETE/PATCH/OPTIONS/HEAD)
+- [x] Implement `insert(method, path, handler_id)`
+- [x] Implement `recognize(method, path) -> RouteMatch`
+- [x] Support `:param` capture
+- [x] Support wildcard `*` capture if desired (define semantics)
+- [x] Implement `feu-router`
+- [x] Add `matchit` dependency
+- [x] Define `MethodRouter` struct
+- [x] Define `Router` wrapper (optional, or just expose `MethodRouter`)
+- [x] Integrate `feu-router` into `feu-core`
+- [x] Add `feu-router` dependency to `feu-core`
+- [x] Implement `App` using `MethodRouter` instead of `Vec`
+- [x] Implement `HandlerRegistry` (store `Arc<dyn Handler>` in `Vec`, router stores indices/IDs)
+- [x] Integrate router into `App`
+- [x] Replace temporary GET-only table with router backend
+- [x] Implement handler registry in `App` (Vec of handlers)
+- [x] Update `App::handle` to call router and dispatch handler by id
+- [x] Add param support to `Ctx`
+- [x] Add `Ctx` field: `params: Params`
+- [x] Implement `c.param(key)`
+- [x] Implement `c.param(name) -> Result<String, Error>` using params
 - [ ] Decide param conversion rules (string-only first; typed later via extractors)
-- [ ] Expand routing API
-- [ ] Add `app.post/put/delete/patch/options/head`
-- [ ] Add `app.any`
-- [ ] Add `app.on(methods, path, handler)`
+- [x] Expand routing API
+- [x] Add `app.post/put/delete/patch/options/head`
+- [x] Add `app.any`
+- [x] Add `app.on(methods, path, handler)`
 - [ ] Add composition API
 - [ ] Add `app.route(prefix, sub_app)` (nesting)
 - [ ] Add `app.base_path(prefix)`
