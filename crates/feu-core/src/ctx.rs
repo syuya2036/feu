@@ -1,3 +1,4 @@
+use crate::extract::FromRequest;
 use crate::rt::RuntimeCtx;
 use crate::types::{FeuBody, FeuRequest, FeuResponse};
 use http::{HeaderName, HeaderValue, StatusCode};
@@ -8,6 +9,10 @@ use std::sync::Arc;
 /// Follows the "A-plan" design:
 /// - `status(...)` and `header(...)` set pending state.
 /// - Response helpers like `text(...)` consume this pending state.
+///
+/// **Lifecycle Note**: Response helper methods consume `self` (`Ctx`), enforcing that only one response
+/// is generated and preventing modification after the response is finalized. This is crucial for
+/// correctness, especially with streaming bodies.
 pub struct Ctx<E = ()> {
     pub req: FeuRequest,
     pub env: E,
@@ -59,6 +64,16 @@ impl<E: Clone + Send + Sync + 'static> Ctx<E> {
         None
     }
 
+    /// Access the request method
+    pub fn method(&self) -> &http::Method {
+        self.req.method()
+    }
+
+    /// Access the request path
+    pub fn path(&self) -> &str {
+        self.req.uri().path()
+    }
+
     // --- Pending Response Configuration (A-plan) ---
 
     /// Sets the pending status code.
@@ -82,6 +97,14 @@ impl<E: Clone + Send + Sync + 'static> Ctx<E> {
         self
     }
 
+    #[cfg(feature = "cookie")]
+    pub fn set_cookie(&mut self, cookie: cookie::Cookie<'_>) -> &mut Self {
+        if let Ok(val) = http::HeaderValue::from_str(&cookie.to_string()) {
+            self.pending_headers.append(http::header::SET_COOKIE, val);
+        }
+        self
+    }
+
     /// Consumes pending state and resets it.
     pub(crate) fn take_pending(&mut self) -> (Option<StatusCode>, http::HeaderMap) {
         let status = self.pending_status.take();
@@ -100,9 +123,14 @@ impl<E: Clone + Send + Sync + 'static> Ctx<E> {
         }
 
         // Append headers
+        // Append headers (handle multi-value headers properly)
         let res_headers = res.0.headers_mut();
+        let mut last_key: Option<http::HeaderName> = None;
         for (k, v) in headers {
             if let Some(key) = k {
+                last_key = Some(key.clone());
+                res_headers.append(key, v);
+            } else if let Some(ref key) = last_key {
                 res_headers.append(key, v);
             }
         }
@@ -120,9 +148,22 @@ impl<E: Clone + Send + Sync + 'static> Ctx<E> {
         self.apply_pending(res)
     }
 
-    // pub fn json<T: serde::Serialize>(&mut self, value: T) -> Result<FeuResponse> {
-    //     ...
-    // }
+    #[cfg(feature = "json")]
+    pub fn json<T: serde::Serialize>(mut self, value: T) -> crate::error::Result<FeuResponse> {
+        let body =
+            serde_json::to_string(&value).map_err(|e| crate::error::Error::msg(e.to_string()))?;
+        let mut res = http::Response::new(FeuBody::Text(body));
+        res.headers_mut().insert(
+            http::header::CONTENT_TYPE,
+            http::HeaderValue::from_static("application/json"),
+        );
+        let res = FeuResponse(res);
+        Ok(self.apply_pending(res))
+    }
+
+    pub async fn extract<T: FromRequest<E>>(&mut self) -> crate::error::Result<T> {
+        T::from_request(&mut self.req, &self.env).await
+    }
 
     // Manual raw body
     pub fn body(mut self, body: impl Into<FeuBody>) -> FeuResponse {

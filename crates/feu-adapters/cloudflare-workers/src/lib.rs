@@ -76,6 +76,13 @@ where
         FeuBody::Text(s) => worker::ResponseBody::Body(s.into_bytes()),
         FeuBody::Empty => worker::ResponseBody::Empty,
         FeuBody::Bytes(b) => worker::ResponseBody::Body(b.to_vec()),
+        // Handle Stream or future variants
+        #[allow(unreachable_patterns)]
+        _ => {
+            return Err(worker::Error::RustError(
+                "Body type not supported in this adapter (e.g. Stream)".into(),
+            ));
+        }
     };
 
     let w_res = WorkerResponse::from_body(worker_body)?;

@@ -32,6 +32,7 @@ where
                     crate::error::ErrorKind::NotFound => StatusCode::NOT_FOUND,
                     crate::error::ErrorKind::BadRequest => StatusCode::BAD_REQUEST,
                     crate::error::ErrorKind::Internal => StatusCode::INTERNAL_SERVER_ERROR,
+                    crate::error::ErrorKind::Message(_) => StatusCode::BAD_REQUEST,
                 };
                 FeuResponse::text(e.to_string()).with_status(status)
             }

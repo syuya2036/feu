@@ -2,7 +2,7 @@ use crate::ctx::Ctx;
 use crate::error::Result;
 use crate::handler::Handler;
 use crate::rt::{NoOpRuntimeCtx, RuntimeCtx};
-use crate::types::{FeuRequest, FeuResponse};
+use crate::types::{FeuRequest, FeuResponse, Params};
 use feu_router::{HandlerId, MethodRouter};
 use http::{Method, StatusCode};
 use std::sync::Arc;
@@ -271,7 +271,9 @@ impl<E: Clone + Send + Sync + 'static> App<E> {
                 if let Some(match_) = router.recognize(method, path) {
                     let handler = &handlers[match_.handler_id.0];
                     let mut ctx = req;
-                    ctx.params = match_.params;
+                    let params_vec = match_.params;
+                    ctx.req.extensions_mut().insert(Params(params_vec.clone()));
+                    ctx.params = params_vec;
                     handler.call(ctx).await
                 } else if let Some(h) = not_found.as_ref() {
                     h.call(req).await
