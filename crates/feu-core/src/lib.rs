@@ -17,3 +17,9 @@ pub use types::{FeuBody, FeuRequest, FeuResponse};
 mod tests;
 #[cfg(test)]
 mod tests_router;
+
+pub mod middleware;
+pub use middleware::{Middleware, Next};
+
+#[cfg(test)]
+mod tests_middleware;
