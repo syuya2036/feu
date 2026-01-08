@@ -123,3 +123,16 @@ impl From<http::Response<FeuBody>> for FeuResponse {
         FeuResponse(inner)
     }
 }
+
+impl std::ops::Deref for FeuResponse {
+    type Target = http::Response<FeuBody>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl std::ops::DerefMut for FeuResponse {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}

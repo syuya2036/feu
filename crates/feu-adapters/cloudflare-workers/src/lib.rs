@@ -77,6 +77,7 @@ where
         FeuBody::Empty => worker::ResponseBody::Empty,
         FeuBody::Bytes(b) => worker::ResponseBody::Body(b.to_vec()),
         // Handle Stream or future variants
+        #[allow(unreachable_patterns)]
         _ => {
             return Err(worker::Error::RustError(
                 "Body type not supported in this adapter (e.g. Stream)".into(),

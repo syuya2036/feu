@@ -64,6 +64,16 @@ impl<E: Clone + Send + Sync + 'static> Ctx<E> {
         None
     }
 
+    /// Access the request method
+    pub fn method(&self) -> &http::Method {
+        self.req.method()
+    }
+
+    /// Access the request path
+    pub fn path(&self) -> &str {
+        self.req.uri().path()
+    }
+
     // --- Pending Response Configuration (A-plan) ---
 
     /// Sets the pending status code.

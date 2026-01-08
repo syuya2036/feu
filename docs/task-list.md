@@ -241,20 +241,20 @@
 
 ## Phase 5 — Built-in Middleware Set (Batteries Included) + Docs
 
-- [ ] Implement `feu-middleware` crate structure
-- [ ] Provide a common middleware config pattern (builder structs)
-- [ ] Implement ops/observability middleware first
-- [ ] Implement `logger` middleware (method/path/status/latency)
-- [ ] Implement `request_id` middleware (generate/propagate + inject into Ctx)
+- [x] Implement `feu-middleware` crate structure
+- [x] Provide a common middleware config pattern (builder structs)
+- [x] Implement ops/observability middleware first
+- [x] Implement `logger` middleware (method/path/status/latency)
+- [x] Implement `request_id` middleware (generate/propagate + inject into Ctx)
 - [ ] Implement `timing` middleware (Server-Timing headers)
-- [ ] Implement `timeout` middleware (cancel/timeout response)
-- [ ] Implement security middleware
-- [ ] Implement `cors` middleware (preflight + headers)
-- [ ] Implement `secure_headers` middleware (standard security headers)
+- [x] Implement `timeout` middleware (cancel/timeout response)
+- [x] Implement security middleware
+- [x] Implement `cors` middleware (preflight + headers)
+- [x] Implement `secure_headers` middleware (standard security headers)
 - [ ] Implement `csrf` middleware (minimal viable strategy)
 - [ ] Implement `ip_restriction` middleware (allow/deny CIDR)
-- [ ] Implement perf/caching middleware
-- [ ] Implement `etag` middleware (If-None-Match -> 304)
+- [x] Implement perf/caching middleware
+- [x] Implement `etag` middleware (If-None-Match -> 304)
 - [ ] Implement `cache` middleware (Cache-Control policies)
 - [ ] Add `compress` feature
 - [ ] Implement `compress` middleware (gzip first; br/deflate optional)
@@ -275,13 +275,13 @@
 - [ ] Implement `jwt` verification middleware
 - [ ] Add `jwk` feature
 - [ ] Implement `jwk` fetching/caching for jwt
-- [ ] Middleware tests
-- [ ] Test logger runs and does not break response
-- [ ] Test request_id sets header and is accessible from Ctx extensions
-- [ ] Test cors preflight behavior
-- [ ] Test secure_headers adds expected headers
-- [ ] Test timeout returns timeout response
-- [ ] Test etag returns 304 when matched
+- [x] Middleware tests
+- [x] Test logger runs and does not break response
+- [x] Test request_id sets header and is accessible from Ctx extensions
+- [x] Test cors preflight behavior
+- [x] Test secure_headers adds expected headers
+- [x] Test timeout returns timeout response
+- [x] Test etag returns 304 when matched
 - [ ] Test compress modifies response encoding (feature)
 - [ ] Test body_limit rejects big payloads
 - [ ] Middleware docs (required)
