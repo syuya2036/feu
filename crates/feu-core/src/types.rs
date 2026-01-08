@@ -1,14 +1,31 @@
 use bytes::Bytes;
 use http::StatusCode;
 
-#[derive(Debug, Default)]
+#[derive(Default)]
 pub enum FeuBody {
     #[default]
     Empty,
     Bytes(Bytes),
     Text(String),
-    // Stream will be added later with "streaming" feature
+
+    #[cfg(feature = "streaming")]
+    Stream(futures_util::stream::BoxStream<'static, Result<Bytes, crate::error::Error>>),
 }
+
+impl std::fmt::Debug for FeuBody {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            FeuBody::Empty => write!(f, "Empty"),
+            FeuBody::Bytes(b) => f.debug_tuple("Bytes").field(b).finish(),
+            FeuBody::Text(s) => f.debug_tuple("Text").field(s).finish(),
+            #[cfg(feature = "streaming")]
+            FeuBody::Stream(_) => write!(f, "Stream(...)"),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Params(pub Vec<(String, String)>);
 
 impl From<()> for FeuBody {
     fn from(_: ()) -> Self {

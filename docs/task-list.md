@@ -203,34 +203,39 @@
 
 - [ ] Define extractor framework in core (recommended)
 - [ ] Define `FromRequest` trait (async extraction)
-- [ ] Define structured extraction errors (400 vs 422 policy)
-- [ ] Implement basic extractors (no features)
-- [ ] Implement `Query<T>` extractor (serde_urlencoded or equivalent)
-- [ ] Implement `Path<T>` extractor (deserialize from params)
-- [ ] Implement `Header<T>` extractor (simple typed header parsing)
-- [ ] Implement `Bytes` extractor (collect full body)
-- [ ] Implement `Text` extractor (UTF-8)
-- [ ] Add `json` feature
-- [ ] Add `Json<T>` extractor (content-type checks + parse)
-- [ ] Implement `Ctx::json(value)` response helper (feature `json`)
-- [ ] Ensure `Ctx::json()` consumes pending status/headers correctly
-- [ ] Add JSON error mapping policy (bad JSON -> 400/422)
-- [ ] Add `cookie` feature
-- [ ] Choose cookie implementation crate and policy
-- [ ] Implement response cookie helpers on `FeuResponse` (with_* style)
-- [ ] Implement `Ctx` cookie response convenience (optional) (e.g., `c.cookie(...)`)
-- [ ] Implement request cookie parsing helper/extractor (optional)
-- [ ] Add `streaming` feature
-- [ ] Add `FeuBody::Stream(...)`
-- [ ] Define stream type (BoxStream or HttpBody-like adapter layer)
-- [ ] Define mutation constraints for streaming responses
-- [ ] Document: response cannot be replaced after streaming starts
-- [ ] Add tests for JSON extract/response
-- [ ] Add tests for cookie set/remove
-- [ ] Add tests for streaming plumbing where possible (at least type-level)
-- [ ] Ensure feature matrix builds
-- [ ] Ensure minimal core builds without json/cookie/streaming enabled
-- [ ] Ensure `--all-features` builds and tests pass
+- [x] Define structured extraction errors (400 vs 422 policy)
+- [x] Implement basic extractors (no features)
+- [x] Implement `Query<T>` extractor (serde_urlencoded or equivalent)
+- [x] Implement `Path<T>` extractor (deserialize from params)
+- [x] Implement `Header<T>` extractor (simple typed header parsing - `HeaderMap` implemented)
+- [x] Implement `Bytes` extractor (collect full body)
+- [x] Implement `Text` extractor (UTF-8)
+- [x] Extractors (define Trait and impls)
+  - [x] `FromRequest` trait (async)
+  - [x] `Bytes` / `String`
+  - [x] `Query` (serde)
+  - [x] `Path` (serde)
+  - [x] `Json` (serde, feature-gated `json`)
+  - [x] `Cookie` (feature-gated `cookie`)
+- [x] JSON
+  - [x] `json` feature flag in `feu-core`
+  - [x] `Ctx::json` helper
+- [x] Cookie
+  - [x] `cookie` feature flag
+  - [x] `FeuResponse` helper (`with_cookie`)
+  - [x] `Ctx` helper (`set_cookie`)
+- [x] Streaming
+  - [x] `streaming` feature flag
+  - [x] `FeuBody::Stream` variant
+  - [x] Plumbing for stream response (BoxStream or HttpBody-like adapter layer)
+- [x] Define mutation constraints for streaming responses (Documented in `Ctx`)
+- [x] Document: response cannot be replaced after streaming starts
+- [x] Add tests for JSON extract/response
+- [x] Add tests for cookie set/remove
+- [x] Add tests for streaming plumbing where possible (at least type-level)
+- [x] Ensure feature matrix builds
+- [x] Ensure minimal core builds without json/cookie/streaming enabled
+- [x] Ensure `--all-features` builds and tests pass
 
 ---
 

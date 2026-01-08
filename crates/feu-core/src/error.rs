@@ -6,7 +6,8 @@ pub enum ErrorKind {
     Internal,
     #[error("Bad request")]
     BadRequest,
-    // Add more as needed
+    #[error("{0}")]
+    Message(String),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -23,6 +24,12 @@ impl Error {
 
     pub fn kind(&self) -> &ErrorKind {
         &self.kind
+    }
+
+    pub fn msg(msg: impl Into<String>) -> Self {
+        Self {
+            kind: ErrorKind::Message(msg.into()),
+        }
     }
 }
 
