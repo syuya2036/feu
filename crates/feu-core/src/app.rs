@@ -39,7 +39,7 @@ impl App {
         if let Some((_, _, handler)) = self
             .routes
             .iter()
-            .find(|(m, p, _)| m == &method && p == &path)
+            .find(|(m, p, _)| *m == method && p == &path)
         {
             let ctx = Ctx::new(req);
             handler.call(ctx).await

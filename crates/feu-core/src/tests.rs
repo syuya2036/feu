@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod tests {
+mod unit_tests {
     use crate::app::App;
     use crate::ctx::Ctx;
     use crate::types::FeuBody;
