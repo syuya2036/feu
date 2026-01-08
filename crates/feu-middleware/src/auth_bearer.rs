@@ -34,8 +34,7 @@ impl Middleware for BearerAuth {
             .and_then(|h| h.to_str().ok());
 
         let valid = if let Some(header) = auth_header {
-            if header.starts_with("Bearer ") {
-                let token = &header[7..];
+            if let Some(token) = header.strip_prefix("Bearer ") {
                 (self.validator)(token)
             } else {
                 false

@@ -2,7 +2,7 @@ use base64::prelude::*;
 use feu_core::app::App;
 use feu_core::ctx::Ctx;
 use feu_middleware::{BasicAuth, BearerAuth, MethodOverride, TrailingSlash};
-use http::{Method, StatusCode};
+use http::StatusCode;
 
 #[tokio::test]
 async fn test_method_override() {

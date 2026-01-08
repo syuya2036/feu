@@ -6,9 +6,11 @@ use http::header::{AUTHORIZATION, WWW_AUTHENTICATE};
 use http::StatusCode;
 use std::sync::Arc;
 
+type BasicValidator = Arc<dyn Fn(&str, &str) -> bool + Send + Sync>;
+
 #[derive(Clone)]
 pub struct BasicAuth {
-    validator: Arc<dyn Fn(&str, &str) -> bool + Send + Sync>,
+    validator: BasicValidator,
     realm: String,
 }
 
@@ -35,8 +37,7 @@ impl Middleware for BasicAuth {
             .and_then(|h| h.to_str().ok());
 
         let valid = if let Some(header) = auth_header {
-            if header.starts_with("Basic ") {
-                let token = &header[6..];
+            if let Some(token) = header.strip_prefix("Basic ") {
                 if let Ok(decoded) = BASE64_STANDARD.decode(token) {
                     if let Ok(cred) = String::from_utf8(decoded) {
                         if let Some((user, pass)) = cred.split_once(':') {
