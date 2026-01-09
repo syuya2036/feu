@@ -6,6 +6,7 @@ pub mod extract;
 pub mod handler;
 pub mod response;
 pub mod rt;
+pub mod tracing;
 pub mod types;
 
 // Re-exports
