@@ -6,6 +6,8 @@
 
 This README describes the **intended public API and architecture** (a “spec-style README”) so implementation can track it.
 
+This is an AI-produced PoC, and the features below are the roadmap. Some are implemented and some are not.
+
 ---
 
 ## Why feu?
